@@ -1,9 +1,6 @@
 # AirPlay-Instruments
 
-Air Play instruments is a capstone project dedicated to improving the accessibility, ease of usage, and expression of music instruments for musicians from all walks of life. 
-In this project, we will leverage computer vision, radar technology, and midi interface to create an all in one HCI tool that allow users to input musical information with ease.
-
-Our target users are travelling musicians, producers, and people looking to learn about music without having to pay for expensive production tools (i.e midi controller keyboards, pads, actual instruments, microphones, and etc.)
+**AirPlay Instruments** is a capstone project dedicated to enhancing the accessibility, ease of use, and expressiveness of musical instruments for musicians of all levels. By leveraging computer vision, radar technology, and MIDI interfaces, we aim to develop an all-in-one HCI tool that allows users to input musical information with ease, whether they are traveling musicians, producers, or beginners exploring music without the need for expensive production tools (e.g., MIDI controller keyboards, pads, actual instruments, microphones, etc.).
 
 ---
 # Team Organization
@@ -22,23 +19,39 @@ Our team consists of four undergrad students from ECE. Our respective contributi
 * Product Validator
 ---
 
-### Weekly Status Update:
+# Status Tracker
+## Weekly Status Update:
 | Week/Date | Joey | Nick | Tangia | Logan |
 |:----------------------:|:-------------:|:-:|:-:|:-:|
 | Week 0 (Sep 2th, 2024) |               |   |   |   |
 |         Week 1         |               |   |   |   |
 |         Week 2         |               |   |   |   |
 
-### Deliverables and Deadlines:
-| Deliverables | Date | Information |Asignee|
-|:------------:|:----:|:-----------:| :-----:|
-| Research on sensors | 00| Research on which type of sensors we can use for high speed movement capture and directionality | Team |
-| Friday Meeting to discuss project overview  | 00 | 00            |Team|
-|              |      |             ||
+## Deliverables and Deadlines
 
-### Highlevel Reminders:
-* Weekly meeting with Professor. Adve on `Wednesdays @ 3:00PM`.
-* Status meeting update on weeks during ECE496 lecture blocks
+| Deliverable              | Date | Information | Assignee |
+|:------------------------:|:----:|:-----------:|:--------:|
+| Research on sensors      | TBD  | Identify sensors for high-speed movement capture and directionality | Team |
+| Project overview meeting | TBD  | Review initial project scope and objectives | Team |
+
+## High-Level Reminders
+
+* Weekly meeting with Prof. Adve on **Wednesdays @ 3:00 PM**.
+* Status update meetings during ECE496 lecture blocks.
+
+---
+
+# Resources
+
+Feel free to add any useful resources for code, libraries, and reading materials here!
+
+## MIDI
+- [MIDO Documentation](https://mido.readthedocs.io/en/stable/index.html)
+
+## Computer Vision
+- [Open CV Python](https://docs.opencv.org/4.x/index.html)
+- [Mediapipe](https://ai.google.dev/edge/mediapipe/solutions/vision/gesture_recognizer/python?_gl=1*qys266*_up*MQ..*_ga*MTQwMjEzNTAwNy4xNzI1NTUyNzc3*_ga_P1DBVKWT6V*MTcyNTU1Mjc3Ni4xLjAuMTcyNTU1Mjc3Ni4wLjAuMTM5MjQ4OTI5MA..)
+
 
 
 
