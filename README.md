@@ -30,13 +30,15 @@ Our team consists of four undergrad students from ECE. Our respective contributi
 |         Week 2         |               |   |   |   |
 
 ### Deliverables and Deadlines:
-| Deliverables | Date | Information |
-|:------------:|:----:|:-----------:|
-|              |      |             |
-|              |      |             |
-|              |      |             |
+| Deliverables | Date | Information |Asignee|
+|:------------:|:----:|:-----------:| :-----:|
+| Research on sensors | 00| Research on which type of sensors we can use for high speed movement capture and directionality | Team |
+| Friday Meeting to discuss project overview  | 00 | 00            |Team|
+|              |      |             ||
 
 ### Highlevel Reminders:
 * Weekly meeting with Professor. Adve on `Wednesdays @ 3:00PM`.
 * Status meeting update on weeks during ECE496 lecture blocks
+
+
 
