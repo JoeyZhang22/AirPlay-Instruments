@@ -243,7 +243,7 @@ def main():
 
   run(args.model, int(args.numHands), float(args.minHandDetectionConfidence),
       args.minHandPresenceConfidence, args.minTrackingConfidence,
-      int(args.cameraId), args.frameWidth, args.frameHeight)
+      int(args.cameraId), int(args.frameWidth), int(args.frameHeight))
 
 
 if __name__ == '__main__':
