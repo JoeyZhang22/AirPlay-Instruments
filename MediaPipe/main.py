@@ -19,7 +19,7 @@ import sys
 import time
 
 import cv2
-import recognize
+import mediapipe_utils
 
 import mediapipe as mp
 
@@ -29,17 +29,11 @@ from mediapipe.framework.formats import landmark_pb2
 mp_hands = mp.solutions.hands
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
+
 # Global variables to calculate FPS
 COUNTER, FPS = 0, 0
 START_TIME = time.time()
-"""
-# Global variables to calculate FPS, stored in a dictionary so it can be passed by reference
-FPS_PARAMS = {
-  "COUNTER": 0,
-  "FPS": 0,
-  "START_TIME": time.time()
-}
-"""
+
 def update_FPS(fps_refresh_frame_count: int):
   global FPS, COUNTER, START_TIME
   # Calculate the FPS
@@ -91,7 +85,7 @@ def run(model: str, num_hands: int,
   recognition_result_list = []
 
   # init recognizer
-  recognizer = recognize.MP_Recognizer(
+  recognizer = mediapipe_utils.Recognizer(
               model, 
               num_hands,
               min_hand_detection_confidence,
@@ -181,6 +175,7 @@ def run(model: str, num_hands: int,
       recognition_frame = current_frame
       recognition_result_list.clear()
 
+    # Diplay the frame with labelling
     if recognition_frame is not None:
         cv2.imshow('gesture_recognition', recognition_frame)
 
