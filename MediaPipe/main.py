@@ -11,13 +11,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Main scripts to run gesture recognition."""
+
+# Main scripts
 
 import argparse
 import sys
 import time
 
 import cv2
+import recognize
+
 import mediapipe as mp
 
 from mediapipe.tasks import python
@@ -26,12 +29,25 @@ from mediapipe.framework.formats import landmark_pb2
 mp_hands = mp.solutions.hands
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
-
-
 # Global variables to calculate FPS
 COUNTER, FPS = 0, 0
 START_TIME = time.time()
+"""
+# Global variables to calculate FPS, stored in a dictionary so it can be passed by reference
+FPS_PARAMS = {
+  "COUNTER": 0,
+  "FPS": 0,
+  "START_TIME": time.time()
+}
+"""
+def update_FPS(fps_refresh_frame_count: int):
+  global FPS, COUNTER, START_TIME
+  # Calculate the FPS
+  if COUNTER % fps_refresh_frame_count == 0:
+    FPS = fps_refresh_frame_count / (time.time() - START_TIME)
+    START_TIME = time.time()
 
+  COUNTER += 1
 
 def run(model: str, num_hands: int,
         min_hand_detection_confidence: float,
@@ -64,7 +80,7 @@ def run(model: str, num_hands: int,
   text_color = (0, 0, 0)  # black
   font_size = 1
   font_thickness = 1
-  fps_avg_frame_count = 10
+  fps_refresh_frame_count = 10
 
   # Label box parameters
   label_text_color = (255, 255, 255)  # white
@@ -74,28 +90,13 @@ def run(model: str, num_hands: int,
   recognition_frame = None
   recognition_result_list = []
 
-  def save_result(result: vision.GestureRecognizerResult,
-                  unused_output_image: mp.Image, timestamp_ms: int):
-      global FPS, COUNTER, START_TIME
-
-      # Calculate the FPS
-      if COUNTER % fps_avg_frame_count == 0:
-          FPS = fps_avg_frame_count / (time.time() - START_TIME)
-          START_TIME = time.time()
-
-      recognition_result_list.append(result)
-      COUNTER += 1
-
-  # Initialize the gesture recognizer model
-  base_options = python.BaseOptions(model_asset_path=model)
-  options = vision.GestureRecognizerOptions(base_options=base_options,
-                                          running_mode=vision.RunningMode.LIVE_STREAM,
-                                          num_hands=num_hands,
-                                          min_hand_detection_confidence=min_hand_detection_confidence,
-                                          min_hand_presence_confidence=min_hand_presence_confidence,
-                                          min_tracking_confidence=min_tracking_confidence,
-                                          result_callback=save_result)
-  recognizer = vision.GestureRecognizer.create_from_options(options)
+  # init recognizer
+  recognizer = recognize.MP_Recognizer(
+              model, 
+              num_hands,
+              min_hand_detection_confidence,
+              min_hand_presence_confidence, 
+              min_tracking_confidence)
 
   # Continuously capture images from the camera and run inference
   while cap.isOpened():
@@ -109,10 +110,9 @@ def run(model: str, num_hands: int,
 
     # Convert the image from BGR to RGB as required by the TFLite model.
     rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=rgb_image)
 
     # Run gesture recognizer using the model.
-    recognizer.recognize_async(mp_image, time.time_ns() // 1_000_000)
+    recognizer.run_async(rgb_image, time.time_ns() // 1_000_000)
 
     # Show the FPS
     fps_text = 'FPS = {:.1f}'.format(FPS)
@@ -121,7 +121,9 @@ def run(model: str, num_hands: int,
     cv2.putText(current_frame, fps_text, text_location, cv2.FONT_HERSHEY_DUPLEX,
                 font_size, text_color, font_thickness, cv2.LINE_AA)
 
+    recognition_result_list = recognizer.get_recognized_output()
     if recognition_result_list:
+      update_FPS(fps_refresh_frame_count)
       # Draw landmarks and write the text for each hand.
       for hand_index, hand_landmarks in enumerate(
           recognition_result_list[0].hand_landmarks):
