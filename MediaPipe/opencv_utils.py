@@ -46,7 +46,7 @@ def draw_gesture_labels(recognition_result_list, current_frame):
           category_name = gesture[0].category_name
           handedness = recognition_result_list[0].handedness[hand_index][0].category_name
           # Mirror the handedness
-          handedness = "left" if handedness is "right" else "left"
+          handedness = "Left" if handedness == "Right" else "Right"
           score = round(gesture[0].score, 2)
           result_text = f'{handedness} {category_name} ({score})'
 
