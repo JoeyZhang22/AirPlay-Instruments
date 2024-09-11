@@ -37,6 +37,11 @@ class Recognizer():
                                             result_callback = save_result)
     self.recognizer = vision.GestureRecognizer.create_from_options(self.options)
   
+  # To be implemented...
+  def run_sync(self, rgb_image):
+    mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=rgb_image)
+    self.recognizer.recognize(mp_image)
+
   # This one doesn't return, but start recognizing work in the background
   def run_async(self, rgb_image, time_ms):
     mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=rgb_image)
@@ -54,22 +59,24 @@ class Recognizer():
     transform_output = copy.deepcopy(self.recognition_result_list)
     return transform_output
 
-  # To be implemented...
-  def run_sync(self):
-    return
-  
   # Close recognizer
   def close(self):
     self.recognizer.close()
 
-class Drawer():
-  def draw_landmarks(image, hand_landmarks_proto):
-    mp_drawing.draw_landmarks(
-      current_frame,
-      hand_landmarks_proto,
-      mp_hands.HAND_CONNECTIONS,
-      mp_drawing_styles.get_default_hand_landmarks_style(),
-      mp_drawing_styles.get_default_hand_connections_style())
+# MediaPipe drawing solutions
+def draw_landmarks(image, hand_landmarks):
+  # Draw hand landmarks on the frame
+  hand_landmarks_proto = landmark_pb2.NormalizedLandmarkList()
+  hand_landmarks_proto.landmark.extend([
+  landmark_pb2.NormalizedLandmark(x=landmark.x, y=landmark.y, z=landmark.z)
+                                  for landmark in hand_landmarks])
+
+  mp_drawing.draw_landmarks(
+  image,
+  hand_landmarks_proto,
+  mp_hands.HAND_CONNECTIONS,
+  mp_drawing_styles.get_default_hand_landmarks_style(),
+  mp_drawing_styles.get_default_hand_connections_style())
   
-  
+
   
