@@ -68,15 +68,15 @@ def draw_landmarks(image, hand_landmarks):
   # Draw hand landmarks on the frame
   hand_landmarks_proto = landmark_pb2.NormalizedLandmarkList()
   hand_landmarks_proto.landmark.extend([
-  landmark_pb2.NormalizedLandmark(x=landmark.x, y=landmark.y, z=landmark.z)
-                                  for landmark in hand_landmarks])
+    landmark_pb2.NormalizedLandmark(
+      x=landmark.x, y=landmark.y, z=landmark.z) for landmark in hand_landmarks])
 
   mp_drawing.draw_landmarks(
-  image,
-  hand_landmarks_proto,
-  mp_hands.HAND_CONNECTIONS,
-  mp_drawing_styles.get_default_hand_landmarks_style(),
-  mp_drawing_styles.get_default_hand_connections_style())
+    image,
+    hand_landmarks_proto,
+    mp_hands.HAND_CONNECTIONS,
+    mp_drawing_styles.get_default_hand_landmarks_style(),
+    mp_drawing_styles.get_default_hand_connections_style())
   
 
   
