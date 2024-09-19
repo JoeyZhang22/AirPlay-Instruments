@@ -1,9 +1,9 @@
 import cv2
 import mediapipe_utils
 
-# Visualization parameters
-row_size = 50  # pixels
-left_margin = 24  # pixels
+# Visualization default parameters
+top_margin = 25  # pixels
+left_margin = 25  # pixels
 text_color = (0, 0, 0)  # black
 font_thickness = 1
 
@@ -25,9 +25,22 @@ def open_camera(camera_id, width, height):
 
 def draw_fps(current_frame, FPS):
   fps_text = 'FPS = {:.1f}'.format(FPS)
-  text_location = (left_margin, row_size)
-  cv2.putText(current_frame, fps_text, text_location, cv2.FONT_HERSHEY_DUPLEX,
-              label_font_size, text_color, font_thickness, cv2.LINE_AA)
+  text_location = (left_margin, top_margin)
+  draw_text(current_frame, text_location, fps_text)
+
+def draw_text(current_frame, text_location, text):
+  # Compute text size
+  text_size = \
+  cv2.getTextSize(text, cv2.FONT_HERSHEY_DUPLEX, label_font_size,
+                  label_thickness)[0]
+  text_width, text_height = text_size
+
+  # Boudary protection
+
+  # Draw the text
+  cv2.putText(current_frame, text, text_location,
+              cv2.FONT_HERSHEY_DUPLEX, label_font_size,
+              label_text_color, label_thickness, cv2.LINE_AA)
 
 def draw_gesture_labels(recognition_result_list, current_frame):
   # Draw landmarks and write the text for each hand.
@@ -41,37 +54,20 @@ def draw_gesture_labels(recognition_result_list, current_frame):
     frame_height, frame_width = current_frame.shape[:2]
     x_min_px = int(x_min * frame_width)
     y_min_px = int(y_min * frame_height)
-    y_max_px = int(y_max * frame_height)
 
-    
     # Get gesture classification results
     if recognition_result_list[0].gestures:
       gesture = recognition_result_list[0].gestures[hand_index]
       category_name = gesture[0].category_name
       handedness = recognition_result_list[0].handedness[hand_index][0].category_name
+      
       # Mirror the handedness
       handedness = "Left" if handedness == "Right" else "Right"
       score = round(gesture[0].score, 2)
       result_text = f'{handedness} {category_name} ({score})'
-      # Compute text size
-      text_size = \
-      cv2.getTextSize(result_text, cv2.FONT_HERSHEY_DUPLEX, label_font_size,
-                      label_thickness)[0]
-      text_width, text_height = text_size
 
-      # Calculate text position (above the hand)
-      text_x = x_min_px
-      text_y = y_min_px - 10  # Adjust this value as needed
+      draw_text(current_frame, (x_min_px, y_min_px - 10), result_text)
 
-      # Make sure the text is within the frame boundaries
-      if text_y < 0:
-        text_y = y_max_px + text_height
-
-      # Draw the text
-      cv2.putText(current_frame, result_text, (text_x, text_y),
-                  cv2.FONT_HERSHEY_DUPLEX, label_font_size,
-                  label_text_color, label_thickness, cv2.LINE_AA)
-  
     # Draw hand landmarks on the frame
     mediapipe_utils.draw_landmarks(current_frame, hand_landmarks)
 
@@ -94,3 +90,11 @@ def draw_division_lines(current_frame):
   cv2.line(current_frame, (frame_width//2, 0), (frame_width//2, frame_height), line_color, line_thickness)
   cv2.line(current_frame, (0, frame_height//3), (frame_width, frame_height//3), line_color, line_thickness)
   cv2.line(current_frame, (0, 2*frame_height//3), (frame_width, 2*frame_height//3), line_color, line_thickness)
+
+  # Draw Labels for each area
+  draw_text(current_frame, (0, frame_height//3), 'Strum Top')
+  draw_text(current_frame, (0, 2*frame_height//3), 'Neutral')
+  draw_text(current_frame, (0, frame_height), 'Strum Down')
+  draw_text(current_frame, (frame_width//2, frame_height//3), 'Major')
+  draw_text(current_frame, (frame_width//2, 2*frame_height//3), 'Minor')
+  draw_text(current_frame, (frame_width//2, frame_height), 'Special')
