@@ -1,20 +1,23 @@
 import cv2
 import mediapipe_utils
 
-# Visualization default parameters
+# Window parameters
 top_margin = 25  # pixels
 left_margin = 25  # pixels
-text_color = (0, 0, 0)  # black
-font_thickness = 1
 
-# Label box parameters
+# Visualization default parameters
+default_text_color = (0, 0, 0)  # black
+default_font_size = 0.5
+default_font_thickness = 1
+
+# Label parameters
 label_text_color = (255, 255, 255)  # white
-label_font_size = 0.75
-label_thickness = 1
+label_font_size = 0.5
+label_font_thickness = 1
 
 # Division lines parameters
-line_color = (255, 0, 0)  # grey
-line_thickness = 2
+line_color = (255, 0, 0)  # blue
+line_thickness = 1
 
 def open_camera(camera_id, width, height):
   # Start capturing video input from the camera
@@ -28,19 +31,19 @@ def draw_fps(current_frame, FPS):
   text_location = (left_margin, top_margin)
   draw_text(current_frame, text_location, fps_text)
 
-def draw_text(current_frame, text_location, text):
+def draw_text(current_frame, text_location, text, color=default_text_color, font_size=default_font_size):
   # Compute text size
   text_size = \
-  cv2.getTextSize(text, cv2.FONT_HERSHEY_DUPLEX, label_font_size,
-                  label_thickness)[0]
+  cv2.getTextSize(text, cv2.FONT_HERSHEY_DUPLEX, default_font_size,
+                  default_font_thickness)[0]
   text_width, text_height = text_size
 
   # Boudary protection
 
   # Draw the text
   cv2.putText(current_frame, text, text_location,
-              cv2.FONT_HERSHEY_DUPLEX, label_font_size,
-              label_text_color, label_thickness, cv2.LINE_AA)
+              cv2.FONT_HERSHEY_DUPLEX, font_size,
+              color, default_font_thickness, cv2.LINE_AA)
 
 def draw_gesture_labels(recognition_result_list, current_frame):
   # Draw landmarks and write the text for each hand.
@@ -66,14 +69,14 @@ def draw_gesture_labels(recognition_result_list, current_frame):
       score = round(gesture[0].score, 2)
       result_text = f'{handedness} {category_name} ({score})'
 
-      draw_text(current_frame, (x_min_px, y_min_px - 10), result_text)
+      draw_text(current_frame, (x_min_px, y_min_px - 10), result_text, label_text_color, label_font_size)
 
     # Draw hand landmarks on the frame
     mediapipe_utils.draw_landmarks(current_frame, hand_landmarks)
 
 def draw_division_lines(current_frame):
   """
-  For now the screen is divided to 6 parts:
+  For now, the screen is divided to 6 parts:
     Top-left:     Strum up
     Mid-left:     Neutral
     Bottom-left:  Strump down
@@ -92,9 +95,10 @@ def draw_division_lines(current_frame):
   cv2.line(current_frame, (0, 2*frame_height//3), (frame_width, 2*frame_height//3), line_color, line_thickness)
 
   # Draw Labels for each area
-  draw_text(current_frame, (0, frame_height//3), 'Strum Top')
-  draw_text(current_frame, (0, 2*frame_height//3), 'Neutral')
-  draw_text(current_frame, (0, frame_height), 'Strum Down')
-  draw_text(current_frame, (frame_width//2, frame_height//3), 'Major')
-  draw_text(current_frame, (frame_width//2, 2*frame_height//3), 'Minor')
-  draw_text(current_frame, (frame_width//2, frame_height), 'Special')
+  area_label_color = (0, 255, 0) # red
+  draw_text(current_frame, (0, frame_height//3), 'Strum Top', area_label_color, 0.5)
+  draw_text(current_frame, (0, 2*frame_height//3), 'Neutral', area_label_color, 0.5)
+  draw_text(current_frame, (0, frame_height), 'Strum Down', area_label_color, 0.5)
+  draw_text(current_frame, (frame_width//2, frame_height//3), 'Major', area_label_color, 0.5)
+  draw_text(current_frame, (frame_width//2, 2*frame_height//3), 'Minor', area_label_color, 0.5)
+  draw_text(current_frame, (frame_width//2, frame_height), 'Special', area_label_color, 0.5)

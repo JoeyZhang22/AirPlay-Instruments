@@ -48,16 +48,14 @@ class Recognizer():
     self.recognizer.recognize_async(mp_image, time_ms)
 
   # Recognized result getter
-  def get_recognized_output(self):
-    transformed_output = self.transform_recognized_output()
+  def get_recognition_result(self):
+    recognition_result = copy.deepcopy(self.recognition_result_list)
     self.recognition_result_list.clear()
-    return transformed_output
+    return recognition_result
 
   # This function transform the output from the MP recognizer to the input for Decision Block
-  def transform_recognized_output(self, ):
-    # transform_output = dict()
-    transform_output = copy.deepcopy(self.recognition_result_list)
-    return transform_output
+  def transform_recognition_output(self):
+    transformed_output = dict()
 
   # Close recognizer
   def close(self):
@@ -77,6 +75,4 @@ def draw_landmarks(image, hand_landmarks):
     mp_hands.HAND_CONNECTIONS,
     mp_drawing_styles.get_default_hand_landmarks_style(),
     mp_drawing_styles.get_default_hand_connections_style())
-  
-
   
