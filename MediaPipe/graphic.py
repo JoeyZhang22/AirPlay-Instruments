@@ -73,7 +73,7 @@ def run_graphic(model: str, num_hands: int,
       recognizer.run_async(rgb_image, time.time_ns() // 1_000_000)
 
     # Get the recognized output
-    recognition_result_list = recognizer.get_recognized_output()
+    recognition_result_list = recognizer.get_recognition_result()
 
     # Show the FPS
     current_frame = image
@@ -86,6 +86,10 @@ def run_graphic(model: str, num_hands: int,
     if recognition_result_list:
       update_FPS()
       opencv_utils.draw_gesture_labels(recognition_result_list, current_frame)
+
+    # Send the required recognition info back to decision block
+
+
 
     recognition_frame = current_frame
     recognition_result_list.clear()

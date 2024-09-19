@@ -68,7 +68,7 @@ def main():
       default=480)
   args = parser.parse_args()
 
-  # Start window and recognizer
+  # Start the camera window and recognizer
   graphic.run_graphic(args.model, int(args.numHands), float(args.minHandDetectionConfidence),
       args.minHandPresenceConfidence, args.minTrackingConfidence,
       int(args.cameraId), int(args.frameWidth), int(args.frameHeight), False)
