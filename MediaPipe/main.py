@@ -80,22 +80,26 @@ def run(model: str, num_hands: int,
       )
 
     image = cv2.flip(image, 1)
-
     # Convert the image from BGR to RGB as required by the TFLite model.
     rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-
+    
     # Run gesture recognizer using the model asynchrnously.
     if sync:
       recognizer.run_sync(rgb_image)
     else:
       recognizer.run_async(rgb_image, time.time_ns() // 1_000_000)
 
+    # Get the recognized output
+    recognition_result_list = recognizer.get_recognized_output()
+
     # Show the FPS
     current_frame = image
     opencv_utils.draw_fps(current_frame, FPS)
 
-    # Get the recognized output
-    recognition_result_list = recognizer.get_recognized_output()
+    # Draw the divison lines
+    opencv_utils.draw_division_lines(current_frame)
+
+    # Draw labells if recognizer finished task
     if recognition_result_list:
       update_FPS()
       opencv_utils.draw_gesture_labels(recognition_result_list, current_frame)
@@ -103,7 +107,7 @@ def run(model: str, num_hands: int,
     recognition_frame = current_frame
     recognition_result_list.clear()
 
-    # Diplay the frame with labelling
+    # Diplay the frame on window with labelling
     if recognition_frame is not None:
         # Standarize resolution
         resized_frame = cv2.resize(recognition_frame, (1920, 1080))

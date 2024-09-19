@@ -5,13 +5,16 @@ import mediapipe_utils
 row_size = 50  # pixels
 left_margin = 24  # pixels
 text_color = (0, 0, 0)  # black
-font_size = 1
 font_thickness = 1
 
 # Label box parameters
 label_text_color = (255, 255, 255)  # white
-label_font_size = 1
-label_thickness = 2
+label_font_size = 0.75
+label_thickness = 1
+
+# Division lines parameters
+line_color = (255, 0, 0)  # grey
+line_thickness = 2
 
 def open_camera(camera_id, width, height):
   # Start capturing video input from the camera
@@ -24,7 +27,7 @@ def draw_fps(current_frame, FPS):
   fps_text = 'FPS = {:.1f}'.format(FPS)
   text_location = (left_margin, row_size)
   cv2.putText(current_frame, fps_text, text_location, cv2.FONT_HERSHEY_DUPLEX,
-              font_size, text_color, font_thickness, cv2.LINE_AA)
+              label_font_size, text_color, font_thickness, cv2.LINE_AA)
 
 def draw_gesture_labels(recognition_result_list, current_frame):
   # Draw landmarks and write the text for each hand.
@@ -40,6 +43,7 @@ def draw_gesture_labels(recognition_result_list, current_frame):
     y_min_px = int(y_min * frame_height)
     y_max_px = int(y_max * frame_height)
 
+    
     # Get gesture classification results
     if recognition_result_list[0].gestures:
       gesture = recognition_result_list[0].gestures[hand_index]
@@ -48,7 +52,8 @@ def draw_gesture_labels(recognition_result_list, current_frame):
       # Mirror the handedness
       handedness = "Left" if handedness == "Right" else "Right"
       score = round(gesture[0].score, 2)
-      result_text = f'{handedness} {cStrump down
+      result_text = f'{handedness} {category_name} ({score})'
+      # Compute text size
       text_size = \
       cv2.getTextSize(result_text, cv2.FONT_HERSHEY_DUPLEX, label_font_size,
                       label_thickness)[0]
@@ -84,9 +89,8 @@ def draw_division_lines(current_frame):
 
   # Get the size of the frame
   frame_height, frame_width = current_frame.shape[:2]
-  x_min_px = int(x_min * frame_width)
-  y_min_px = int(y_min * frame_height)
-  y_max_px = int(y_max * frame_height)
 
   # Draw the lines
-  
+  cv2.line(current_frame, (frame_width//2, 0), (frame_width//2, frame_height), line_color, line_thickness)
+  cv2.line(current_frame, (0, frame_height//3), (frame_width, frame_height//3), line_color, line_thickness)
+  cv2.line(current_frame, (0, 2*frame_height//3), (frame_width, 2*frame_height//3), line_color, line_thickness)
