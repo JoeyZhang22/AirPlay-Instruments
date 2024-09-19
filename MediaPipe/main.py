@@ -105,7 +105,9 @@ def run(model: str, num_hands: int,
 
     # Diplay the frame with labelling
     if recognition_frame is not None:
-        cv2.imshow('gesture_recognition', recognition_frame)
+        # Standarize resolution
+        resized_frame = cv2.resize(recognition_frame, (1920, 1080))
+        cv2.imshow('gesture_recognition', resized_frame)
 
     # Stop the program if the ESC key is pressed.
     if cv2.waitKey(1) == 27:
