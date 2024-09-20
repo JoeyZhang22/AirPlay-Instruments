@@ -36,11 +36,14 @@ Our team consists of four undergrad students from ECE. Our respective contributi
 
 ## Deliverables and Deadlines
 
-|       Deliverable        |         Date         |                             Information                             | Assignee |
-| :----------------------: | :------------------: | :-----------------------------------------------------------------: | :------: |
-|   Research on sensors    |         TBD          | Identify sensors for high-speed movement capture and directionality |   Team   |
-| Project overview meeting |         TBD          |             Review initial project scope and objectives             |   Team   |
-|  Component Requirements  | Sept. 11th Wednesday |       Nick(CV), Logan + Tangia (Decision Block, Joey (MIDI))        |   Team   |
+| Deliverable              | Date | Information | Assignee |
+|:------------------------:|:----:|:-----------:|:--------:|
+| ~~Research on sensors~~      | TBD  | ~~Identify sensors for high-speed movement capture and directionality~~ | Team |
+| ~~Project overview meeting~~ | TBD  | ~~Review initial project scope and objectives~~ | Team |
+| ~~Component Requirements~~ | Sept. 11th Wednesday| Nick(CV), Logan + Tangia (Decision Block, Joey (MIDI))| Team |
+| Develop Screen Division coordinate system| September 25th  | Ouput hand position in terms of division on camera caputure (ie. left box, right box, etc.) | Nick | 
+| Chord Library | September 25th  | Have chord library developed with capability to output any chord for 12 scales | Joey | 
+| Decision Block research | September 25th  | Create the architecture, structure for classes and functions compatible with screen division, and define contraints for maximum speed and mapping to max velocity for MIDI  | Tangia/Logan |
 
 ## High-Level Reminders
 
