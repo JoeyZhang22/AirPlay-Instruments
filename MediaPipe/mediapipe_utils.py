@@ -80,26 +80,31 @@ def transform_recognition_output(recognition_result, areas):
     "Handedness" :
     "Area" :
     "Gesture_Type" :
-    "Gesture_Landmarks_Coordinate" :
+    "Gesture_Landmarks" :
     "Score" : 
   }
   """
-  transformed_output = dict()
+  transformed_outputs = []
 
   # Transform the results for decision box
   for hand_index, hand_landmarks in enumerate(recognition_result.hand_landmarks):
+    transformed_output = dict()
+
     transformed_output["Handedness"] = recognition_result.handedness[hand_index][0].category_name
     transformed_output["Gesture_Type"] = recognition_result.gestures[hand_index][0].category_name
-    transformed_output["Gesture_Landmarks_Coordinate"] = hand_landmarks
+    transformed_output["Gesture_Landmarks"] = hand_landmarks
     transformed_output["Score"] = round(recognition_result.gestures[hand_index][0].score, 2)
-
+    
+    transformed_output["Area"] = "None"
     # determine which area this head appears at
     for area in areas:
       if area.is_within(hand_landmarks):
         transformed_output["Area"] = area.name
         break
+    
+    transformed_outputs.append(transformed_output)
   
-  return transformed_output
+  return transformed_outputs
 
 # If more than this within_percentage of the hand appeared in the area, then return true for Area.is_within()
 within_percentage = 0.8 

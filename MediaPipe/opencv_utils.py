@@ -45,9 +45,11 @@ def draw_text(current_frame, text_location, text, color=default_text_color, font
               cv2.FONT_HERSHEY_DUPLEX, font_size,
               color, default_font_thickness, cv2.LINE_AA)
 
-def draw_gesture_labels(recognition_result, current_frame):
+def draw_gesture_labels(recognition_results, current_frame):
   # Draw landmarks and write the text for each hand.
-  for hand_index, hand_landmarks in enumerate(recognition_result.hand_landmarks):
+  for result in recognition_results:
+    hand_landmarks = result["Gesture_Landmarks"]
+
     # Calculate the bounding box of the hand
     x_min = min([landmark.x for landmark in hand_landmarks])
     y_min = min([landmark.y for landmark in hand_landmarks])
@@ -59,17 +61,18 @@ def draw_gesture_labels(recognition_result, current_frame):
     y_min_px = int(y_min * frame_height)
 
     # Get gesture classification results
-    if recognition_result.gestures:
-      gesture = recognition_result.gestures[hand_index]
-      category_name = gesture[0].category_name
-      handedness = recognition_result.handedness[hand_index][0].category_name
-      
-      # Mirror the handedness
-      handedness = "Left" if handedness == "Right" else "Right"
-      score = round(gesture[0].score, 2)
-      result_text = f'{handedness} {category_name} ({score})'
+    handedness = "Left" if result["Handedness"] == "Right" else "Right" # Mirror the handedness
+    gesture = result["Gesture_Type"]
+    score = result["Score"]
+    result_text = f'{handedness} {gesture} ({score})'
 
-      draw_text(current_frame, (x_min_px, y_min_px - 10), result_text, label_text_color, label_font_size)
+    draw_text(current_frame, (x_min_px, y_min_px - 10), result_text, label_text_color, label_font_size)
+
+    # Draw Area Name
+    area_text = f'{result["Area"]}'
+    area_text_color = (0, 0, 255) # red
+    draw_text(current_frame, (x_min_px, y_min_px - 25), area_text, area_text_color, label_font_size)
+
 
     # Draw hand landmarks on the frame
     mediapipe_utils.draw_landmarks(current_frame, hand_landmarks)
