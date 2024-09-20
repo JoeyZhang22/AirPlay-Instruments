@@ -45,9 +45,9 @@ def draw_text(current_frame, text_location, text, color=default_text_color, font
               cv2.FONT_HERSHEY_DUPLEX, font_size,
               color, default_font_thickness, cv2.LINE_AA)
 
-def draw_gesture_labels(recognition_result_list, current_frame):
+def draw_gesture_labels(recognition_result, current_frame):
   # Draw landmarks and write the text for each hand.
-  for hand_index, hand_landmarks in enumerate(recognition_result_list[0].hand_landmarks):
+  for hand_index, hand_landmarks in enumerate(recognition_result.hand_landmarks):
     # Calculate the bounding box of the hand
     x_min = min([landmark.x for landmark in hand_landmarks])
     y_min = min([landmark.y for landmark in hand_landmarks])
@@ -59,10 +59,10 @@ def draw_gesture_labels(recognition_result_list, current_frame):
     y_min_px = int(y_min * frame_height)
 
     # Get gesture classification results
-    if recognition_result_list[0].gestures:
-      gesture = recognition_result_list[0].gestures[hand_index]
+    if recognition_result.gestures:
+      gesture = recognition_result.gestures[hand_index]
       category_name = gesture[0].category_name
-      handedness = recognition_result_list[0].handedness[hand_index][0].category_name
+      handedness = recognition_result.handedness[hand_index][0].category_name
       
       # Mirror the handedness
       handedness = "Left" if handedness == "Right" else "Right"
@@ -74,7 +74,7 @@ def draw_gesture_labels(recognition_result_list, current_frame):
     # Draw hand landmarks on the frame
     mediapipe_utils.draw_landmarks(current_frame, hand_landmarks)
 
-def draw_division_lines(current_frame):
+def draw_division_lines(current_frame, areas):
   """
   For now, the screen is divided to 6 parts:
     Top-left:     Strum up
