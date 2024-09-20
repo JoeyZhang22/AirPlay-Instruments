@@ -5,13 +5,15 @@ import cv2
 import mediapipe_utils
 import opencv_utils
 
+division_area = mediapipe_utils.Area
+
 # Global variables to calculate FPS
 COUNTER, FPS = 0, 0
 START_TIME = time.time()
 FPS_REFREASH_COUNT = 10
 
 # update FPS on display
-def update_FPS():
+def update_fps():
   global FPS, COUNTER, START_TIME, FPS_REFREASH_COUNT
   
   # Calculate the FPS
@@ -20,6 +22,28 @@ def update_FPS():
     START_TIME = time.time()
 
   COUNTER += 1
+
+def define_areas():
+  """
+  For now, the screen is divided to 6 parts:
+    Top-left:     Strum up
+    Mid-left:     Neutral
+    Bottom-left:  Strump down
+
+    Top-right:     Major
+    Mid-right:     Minor
+    Bottom-right:  Special
+  """
+  # initialize areas, for dimension we use normalized values to match results from the recognizer
+  areas = []
+  areas.append(division_area('Strum up', 0, 0, 0.5, 1/3))
+  areas.append(division_area('Neutral', 0, 1/3, 0.5, 2/3))
+  areas.append(division_area('Strump down', 0, 2/3, 0.5, 1))
+  areas.append(division_area('Major', 0.5, 0, 1, 1/3))
+  areas.append(division_area('Minor', 0.5, 1/3, 1, 2/3))
+  areas.append(division_area('Special', 0.5, 2/3, 1, 1))
+  
+  return areas
 
 def run_graphic(model: str, num_hands: int,
         min_hand_detection_confidence: float,
@@ -40,19 +64,22 @@ def run_graphic(model: str, num_hands: int,
       width: The width of the frame captured from the camera.
       height: The height of the frame captured from the camera.
   """
-  # init camera
+  # Init camera
   camera = opencv_utils.open_camera(camera_id, width, height)
 
   recognition_frame = None
   recognition_result_list = []
 
-  # init recognizer
+  # Init recognizer
   recognizer = mediapipe_utils.Recognizer(
               model, 
               num_hands,
               min_hand_detection_confidence,
               min_hand_presence_confidence, 
               min_tracking_confidence)
+
+  # Define areas
+  areas = define_areas()
 
   # Continuously capture images from the camera and run inference
   while camera.isOpened():
@@ -65,7 +92,7 @@ def run_graphic(model: str, num_hands: int,
     image = cv2.flip(image, 1)
     # Convert the image from BGR to RGB as required by the TFLite model.
     rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    
+
     # Run gesture recognizer using the model asynchrnously.
     if sync:
       recognizer.run_sync(rgb_image)
@@ -73,23 +100,22 @@ def run_graphic(model: str, num_hands: int,
       recognizer.run_async(rgb_image, time.time_ns() // 1_000_000)
 
     # Get the recognized output
-    recognition_result_list = recognizer.get_recognition_result()
+    recognition_result_list = recognizer.get_recognition_results()
 
     # Show the FPS
     current_frame = image
     opencv_utils.draw_fps(current_frame, FPS)
 
     # Draw the divison lines
-    opencv_utils.draw_division_lines(current_frame)
+    opencv_utils.draw_division_lines(current_frame, areas)
 
     # Draw labells if recognizer finished task
-    if recognition_result_list:
-      update_FPS()
-      opencv_utils.draw_gesture_labels(recognition_result_list, current_frame)
+    for recognition_result in recognition_result_list:
+      update_fps()
+      opencv_utils.draw_gesture_labels(recognition_result, current_frame)
 
-    # Send the required recognition info back to decision block
-
-
+      # Send the required recognition info back to decision block
+      mediapipe_utils.transform_recognition_output(recognition_result, areas)
 
     recognition_frame = current_frame
     recognition_result_list.clear()

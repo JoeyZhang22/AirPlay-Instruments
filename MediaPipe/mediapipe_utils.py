@@ -48,14 +48,10 @@ class Recognizer():
     self.recognizer.recognize_async(mp_image, time_ms)
 
   # Recognized result getter
-  def get_recognition_result(self):
+  def get_recognition_results(self):
     recognition_result = copy.deepcopy(self.recognition_result_list)
     self.recognition_result_list.clear()
     return recognition_result
-
-  # This function transform the output from the MP recognizer to the input for Decision Block
-  def transform_recognition_output(self):
-    transformed_output = dict()
 
   # Close recognizer
   def close(self):
@@ -76,3 +72,59 @@ def draw_landmarks(image, hand_landmarks):
     mp_drawing_styles.get_default_hand_landmarks_style(),
     mp_drawing_styles.get_default_hand_connections_style())
   
+# This function transform the output from the MP recognizer to the input for Decision Block
+def transform_recognition_output(recognition_result, areas):
+  """
+  Output for decision block format:
+  Output = {
+    "Handedness" :
+    "Area" :
+    "Gesture_Type" :
+    "Gesture_Landmarks_Coordinate" :
+    "Score" : 
+  }
+  """
+  transformed_output = dict()
+
+  # Transform the results for decision box
+  for hand_index, hand_landmarks in enumerate(recognition_result.hand_landmarks):
+    transformed_output["Handedness"] = recognition_result.handedness[hand_index][0].category_name
+    transformed_output["Gesture_Type"] = recognition_result.gestures[hand_index][0].category_name
+    transformed_output["Gesture_Landmarks_Coordinate"] = hand_landmarks
+    transformed_output["Score"] = round(recognition_result.gestures[hand_index][0].score, 2)
+
+    # determine which area this head appears at
+    for area in areas:
+      if area.is_within(hand_landmarks):
+        transformed_output["Area"] = area.name
+        break
+  
+  return transformed_output
+
+# If more than this within_percentage of the hand appeared in the area, then return true for Area.is_within()
+within_percentage = 0.8 
+
+class Area():
+  def __init__(self, name, x_min, y_min, x_max, y_max):
+    self.name = name
+
+    # Dimensions are in normalized form (i.e. 0-1)
+    self.x_min = x_min
+    self.y_min = y_min
+    self.x_max = x_max
+    self.y_max = y_max
+
+  def is_within(self, hand_landmarks):
+    counter = 0
+
+    for landmark in hand_landmarks:
+      if landmark.x > self.x_min and landmark.x < self.x_max and landmark.y > self.y_min and landmark.y < self.y_max:
+        counter += 1
+
+    if counter >= len(hand_landmarks) * within_percentage:
+      return True
+    else :
+      return False
+
+  def draw_label(self, current_frame, frame_width, frame_height, line_color, text_color):
+    return
