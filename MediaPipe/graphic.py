@@ -48,7 +48,8 @@ def define_areas():
 def run_graphic(model: str, num_hands: int,
         min_hand_detection_confidence: float,
         min_hand_presence_confidence: float, min_tracking_confidence: float,
-        camera_id: int, width: int, height: int, sync: bool) -> None:
+        camera_id: int, width: int, height: int, sync: bool,
+        result_queue, result_event) -> None:
   """Continuously run inference on images acquired from the camera.
 
   Args:
@@ -112,23 +113,26 @@ def run_graphic(model: str, num_hands: int,
     # Draw labells if recognizer finished task
     for recognition_result in recognition_result_list:
       update_fps()
-      opencv_utils.draw_gesture_labels(recognition_result, current_frame)
-
-      # Send the required recognition info back to decision block
-      mediapipe_utils.transform_recognition_output(recognition_result, areas)
+      transformed_outputs = mediapipe_utils.transform_recognition_output(recognition_result, areas)
+      opencv_utils.draw_gesture_labels(transformed_outputs, current_frame)
+      
+      # Send data back to main
+      result_queue.put(transformed_outputs)
+      result_event.set()
 
     recognition_frame = current_frame
     recognition_result_list.clear()
 
     # Diplay the frame on window with labelling
     if recognition_frame is not None:
-        # Standarize resolution
-        resized_frame = cv2.resize(recognition_frame, (1920, 1080))
-        cv2.imshow('gesture_recognition', resized_frame)
+      # Standarize resolution
+      resized_frame = cv2.resize(recognition_frame, (1920, 1080))
+      cv2.imshow('gesture_recognition', resized_frame)
 
     # Stop the program if the ESC key is pressed.
     if cv2.waitKey(1) == 27:
-        break
+      result_event.set()
+      break
 
   # Destruction upon exit
   recognizer.close()
