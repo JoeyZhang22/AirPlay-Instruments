@@ -51,7 +51,29 @@ print(gesture_dict)
 print("the chord propertires:")
 print(vars(my_first_chord))
 
-
-
 # To use the difference in location to calculate the velocity of the strum
-def get_velocity(location) -> float:
+def get_velocity(location, start_time, end_time):
+    velocities = []
+    for i in range(1, len(location)):
+        # Extracting x and y coordinates for the wrist landmark (index 0)
+        current_location = location[i][0]
+        previous_location = location[i-1][0]
+        
+        current_position = (
+            current_location.x, 
+            current_location.y
+        )
+        previous_position = (
+            previous_location.x, 
+            previous_location.y
+        )
+        
+        time_interval = end_time - start_time
+        displacement = [
+            current_location[j] - previous_location[j] for j in range(2) # displacement in x and y directions
+        ]
+        
+        velocity = [displacement[j] / time_interval for j in range(2)]
+        velocities.append(velocity)
+        
+    return velocities
