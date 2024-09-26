@@ -4,7 +4,7 @@ from mingus.containers import NoteContainer, Note
 from time import sleep
 
 # Example Chord list
-chord_list = ["Cmin7", "F7"]
+chord_list = ["Cmin7", "F7", "Gmaj", "Cmaj"]
 
 # Convert [Note Letters -> Int]
 midi_chords = []  # integers

@@ -1,3 +1,5 @@
+from ../MIDI/usage/midi_mingus.py import *
+
 # Main scripts for processing captured data to MIDI input
 
 # What is being mapped from what Nick gives us
@@ -13,6 +15,10 @@ class Gesture:
 # Object to give to Joey 
 chord_type_list = ["major", "minor", "dim7", "dom7"]
 notes  = ["a", "b", "c", "d", "e", "f", "g"]
+
+#to play chords using Joey's MIDI stuff
+chord_list = ["Cmin7", "F7", "Gmaj", "Cmaj"]
+
 #start with natrual chords to start
 #map each defined gesture to a note
 def create_gesture_dict(gesture_list, notes_list): 
@@ -77,3 +83,6 @@ def get_velocity(location, start_time, end_time):
         velocities.append(velocity)
         
     return velocities
+
+for chord in chord_list:
+    play(chord=, duration=1)#duration currently set as 1. But in the future, it will be calculate via: end_time - start_time
