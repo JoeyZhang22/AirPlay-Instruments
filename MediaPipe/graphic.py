@@ -120,19 +120,17 @@ def run_graphic(
         opencv_utils.draw_fps(current_frame, FPS)
 
         # Draw the divison lines
-        # opencv_utils.draw_division_lines(current_frame, areas)
+        opencv_utils.draw_division_lines(current_frame, areas)
 
-        # # Draw labells if recognizer finished task
-        # for recognition_result in recognition_result_list:
-        #     update_fps()
-        #     transformed_outputs = mediapipe_utils.transform_recognition_output(
-        #         recognition_result, areas
-        #     )
-        #     opencv_utils.draw_gesture_labels(transformed_outputs, current_frame)
+        for recognition_result in recognition_result_list:
+            update_fps()
+            transformed_outputs = mediapipe_utils.transform_recognition_output(
+                recognition_result, areas
+            )
+            opencv_utils.draw_gesture_labels(transformed_outputs, current_frame)
 
-        #     # Send data back to main
-        #     result_queue.put(transformed_outputs)
-        #     result_event.set()
+            result_queue.put(transformed_outputs)
+            result_event.set()
 
         recognition_frame = current_frame
         recognition_result_list.clear()
@@ -140,23 +138,11 @@ def run_graphic(
         # Diplay the frame on window with labelling
         if recognition_frame is not None:
             # Standarize resolution
-            # scale_factor = 0.5  # Example: resize to 50% of original size
-            # resized_frame = cv2.resize(
-            #     recognition_frame, None, fx=scale_factor, fy=scale_factor
-            # )
-            # cv2.imshow("gesture_recognition", resized_frame)
-            # try:
-            #     cv2.imshow("gesture_recognition", recognition_frame)
-            # except Exception as e:
-            #     print(f"OpenCV error: {e}")
-
-            cv2.imshow("123", recognition_frame)
-            cv2.waitKey(0)  # Wait for a key press to close the window
-            cv2.destroyAllWindows()
+            resized_frame = cv2.resize(recognition_frame, (1440, 900))
+            cv2.imshow("gesture_recognition", resized_frame)
 
         # Stop the program if the ESC key is pressed.
         if cv2.waitKey(1) == 27:
-            result_event.set()
             break
 
     # Destruction upon exit
