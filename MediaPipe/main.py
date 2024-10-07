@@ -21,6 +21,9 @@ def decision_block(result_event, result_queue):
                     result_queue.get()
                 )  # changed to .get instead of no_wait() as no_wait() raises exception if queue is empty
                 # Decision block logic processing recognition results
+
+                """decision block code here"""
+
                 print(results)
         except queue.Empty:
             # No more data to process, reset the event
