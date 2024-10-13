@@ -56,12 +56,6 @@ class Recognizer:
         self.recognizer.recognize_async(mp_image, time_ms)
 
     # Recognized result getter
-    # def get_recognition_results(self):
-    #   recognition_result = copy.deepcopy(self.recognition_result_list)
-    #   self.recognition_result_list.clear()
-    #   return recognition_result
-
-    # Recognized result getter
     def get_recognized_output(self):
         transformed_output = self.transform_recognized_output()
         self.recognition_result_list.clear()
