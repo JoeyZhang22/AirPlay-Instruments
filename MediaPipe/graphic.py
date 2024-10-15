@@ -19,6 +19,7 @@ def update_fps():
 
     # Calculate the FPS
     if COUNTER % FPS_REFREASH_COUNT == 0:
+        COUNTER = 0
         FPS = FPS_REFREASH_COUNT / (time.time() - START_TIME)
         START_TIME = time.time()
 
@@ -113,7 +114,7 @@ def run_graphic(
             recognizer.run_async(rgb_image, time.time_ns() // 1_000_000)
 
         # Get the recognized output
-        recognition_result_list = recognizer.get_recognized_output()
+        recognition_result_list = recognizer.get_recognized_output(areas)
 
         # Show the FPS
         current_frame = image
@@ -123,13 +124,11 @@ def run_graphic(
         opencv_utils.draw_division_lines(current_frame, areas)
 
         for recognition_result in recognition_result_list:
+            if not recognition_result:
+                continue
             update_fps()
-            transformed_outputs = mediapipe_utils.transform_recognition_output(
-                recognition_result, areas
-            )
-            opencv_utils.draw_gesture_labels(transformed_outputs, current_frame)
-
-            result_queue.put(transformed_outputs)
+            opencv_utils.draw_gesture_labels(recognition_result, current_frame)
+            result_queue.put(recognition_result)
             result_event.set()
 
         recognition_frame = current_frame
