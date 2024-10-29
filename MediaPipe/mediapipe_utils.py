@@ -92,6 +92,7 @@ class Recognizer:
                 transformed_output = dict()
 
                 transformed_output["Handedness"] = recognition_result.handedness[hand_index][0].category_name
+                transformed_output["Handedness"] = "Left" if transformed_output["Handedness"] == "Right" else "Right" # Mirror the handedness
                 transformed_output["Gesture_Type"] = recognition_result.gestures[hand_index][0].category_name
                 transformed_output["Gesture_Landmarks"] = hand_landmarks
                 transformed_output["Score"] = round(

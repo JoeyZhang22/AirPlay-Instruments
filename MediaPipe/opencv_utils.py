@@ -61,7 +61,7 @@ def draw_gesture_labels(recognition_result, current_frame):
     y_min_px = int(y_min * frame_height)
 
     # Get gesture classification results
-    handedness = "Left" if hand_result["Handedness"] == "Right" else "Right" # Mirror the handedness
+    handedness = hand_result["Handedness"]
     gesture = hand_result["Gesture_Type"]
     score = hand_result["Score"]
     result_text = f'{handedness} {gesture} ({score})'
