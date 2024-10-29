@@ -92,16 +92,16 @@ def draw_division_lines(current_frame, areas):
   # Get the size of the frame
   frame_height, frame_width = current_frame.shape[:2]
 
-  # Draw the lines
+  # Draw the mid line
   cv2.line(current_frame, (frame_width//2, 0), (frame_width//2, frame_height), line_color, line_thickness)
-  cv2.line(current_frame, (0, frame_height//3), (frame_width, frame_height//3), line_color, line_thickness)
-  cv2.line(current_frame, (0, 2*frame_height//3), (frame_width, 2*frame_height//3), line_color, line_thickness)
 
   # Draw Labels for each area
-  area_label_color = (0, 255, 0) # red
-  draw_text(current_frame, (0, frame_height//3), 'Strum Top', area_label_color, 0.5)
-  draw_text(current_frame, (0, 2*frame_height//3), 'Neutral', area_label_color, 0.5)
-  draw_text(current_frame, (0, frame_height), 'Strum Down', area_label_color, 0.5)
-  draw_text(current_frame, (frame_width//2, frame_height//3), 'Major', area_label_color, 0.5)
-  draw_text(current_frame, (frame_width//2, 2*frame_height//3), 'Minor', area_label_color, 0.5)
-  draw_text(current_frame, (frame_width//2, frame_height), 'Special', area_label_color, 0.5)
+  area_label_color = (0, 255, 0) # blue
+  for area in areas:
+    x_min = int(area.x_min * frame_width)
+    x_max = int(area.x_max * frame_width)
+    y_min = int(area.y_min * frame_height)
+    y_max = int(area.y_max * frame_height)
+
+    cv2.line(current_frame, (x_min, y_max), (x_max, y_max), line_color, line_thickness)
+    draw_text(current_frame, (x_min, y_max - 5), area.name, area_label_color, 0.5)

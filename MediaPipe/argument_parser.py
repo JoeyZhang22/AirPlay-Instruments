@@ -49,5 +49,10 @@ def add_argument():
     help='Height of frame to capture from camera.',
     required=False,
     default=480)
+  parser.add_argument(
+    '--handedness',
+    help='Which hand is preferable to strum',
+    required=False,
+    default="right")
 
   return parser.parse_args()

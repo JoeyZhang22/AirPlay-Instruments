@@ -24,7 +24,7 @@ def decision_block(result_event, result_queue):
 
                 """decision block code here"""
 
-                print(results)
+                # print(results)
         except queue.Empty:
             # No more data to process, reset the event
             result_event.clear()
@@ -62,6 +62,7 @@ def main():
         False,  # This is assuming the 'False' flag is relevant to your logic
         result_queue,  # Queue object for passing results
         result_event,  # Event object for signaling
+        args.handedness,
     )
 
 
