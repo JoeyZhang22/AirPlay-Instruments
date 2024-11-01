@@ -2,8 +2,8 @@ import sys
 import time
 
 import cv2
-import mediapipe_utils
-import opencv_utils
+import MediaPipe.mediapipe_utils as mediapipe_utils
+import MediaPipe.opencv_utils as opencv_utils
 
 division_area = mediapipe_utils.Area
 
@@ -26,25 +26,56 @@ def update_fps():
     COUNTER += 1
 
 
-def define_areas():
+def populate_strum_names(names):
+    names.append("Strum up")
+    names.append("Neutral")
+    names.append("Strum down")
+
+
+def populate_chord_names(names):
+    names.append("Major")
+    names.append("Minor")
+    names.append("Special")
+
+
+def define_areas(handedness):
     """
     For now, the screen is divided to 6 parts:
       Top-left:     Strum up
       Mid-left:     Neutral
-      Bottom-left:  Strump down
+      Bottom-left:  Strum down
 
       Top-right:     Major
       Mid-right:     Minor
       Bottom-right:  Special
     """
+    # define area names based on handedness, the prefered hand will be used for strum area
+    left_areas = []
+    right_areas = []
+    if handedness == "left":
+        populate_strum_names(left_areas)
+        populate_chord_names(right_areas)
+    else:
+        populate_strum_names(right_areas)
+        populate_chord_names(left_areas)
+
     # initialize areas, for dimension we use normalized values to match results from the recognizer
     areas = []
-    areas.append(division_area("Strum up", 0, 0, 0.5, 1 / 3))
-    areas.append(division_area("Neutral", 0, 1 / 3, 0.5, 2 / 3))
-    areas.append(division_area("Strump down", 0, 2 / 3, 0.5, 1))
-    areas.append(division_area("Major", 0.5, 0, 1, 1 / 3))
-    areas.append(division_area("Minor", 0.5, 1 / 3, 1, 2 / 3))
-    areas.append(division_area("Special", 0.5, 2 / 3, 1, 1))
+    left_stride = 1 / len(left_areas)
+    for i in range(len(left_areas)):
+        areas.append(
+            division_area(
+                left_areas[i], 0, 0 + left_stride * i, 0.5, left_stride * (i + 1)
+            )
+        )
+
+    right_stride = 1 / len(right_areas)
+    for i in range(len(right_areas)):
+        areas.append(
+            division_area(
+                right_areas[i], 0.5, 0 + right_stride * i, 1, right_stride * (i + 1)
+            )
+        )
 
     return areas
 
@@ -61,6 +92,7 @@ def run_graphic(
     sync: bool,
     result_queue,
     result_event,
+    handedness,
 ) -> None:
     """Continuously run inference on images acquired from the camera.
 
@@ -93,7 +125,7 @@ def run_graphic(
     )
 
     # Define areas
-    areas = define_areas()
+    areas = define_areas(handedness)
 
     # Continuously capture images from the camera and run inference
     while camera.isOpened():
@@ -128,6 +160,12 @@ def run_graphic(
                 continue
             update_fps()
             opencv_utils.draw_gesture_labels(recognition_result, current_frame)
+
+            # Temp: remoe gesture_landmarks from result
+            recognition_result[0].pop("Gesture_Landmarks")
+            if len(recognition_result) > 1:
+                recognition_result[1].pop("Gesture_Landmarks")
+
             result_queue.put(recognition_result)
             result_event.set()
 

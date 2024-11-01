@@ -86,4 +86,4 @@ print("the chord propertires:")
 print(vars(my_first_chord))
 
 for chord in chord_list:
-    play(chord=, duration=1)#duration currently set as 1. But in the future, it will be calculate via: end_time - start_time
+    play(chord=, duration=1) #duration currently set as 1. But in the future, it will be calculate via: end_time - start_time

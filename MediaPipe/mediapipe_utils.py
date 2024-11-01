@@ -63,7 +63,7 @@ class Recognizer:
         # If there is no new recognition result return immediately
         if not self.recognition_result_list:
             return []
-        
+
         transformed_output = self.transform_recognized_output(areas)
         self.recognition_result_list.clear()
         return transformed_output
@@ -83,17 +83,25 @@ class Recognizer:
         """
 
         recognition_results = copy.deepcopy(self.recognition_result_list)
-    
+
         transformed_results = []
         for recognition_result in recognition_results:
             transformed_outputs = []
             # Transform the results for decision box
-            for hand_index, hand_landmarks in enumerate(recognition_result.hand_landmarks):
+            for hand_index, hand_landmarks in enumerate(
+                recognition_result.hand_landmarks
+            ):
                 transformed_output = dict()
 
-                transformed_output["Handedness"] = recognition_result.handedness[hand_index][0].category_name
-                transformed_output["Handedness"] = "Left" if transformed_output["Handedness"] == "Right" else "Right" # Mirror the handedness
-                transformed_output["Gesture_Type"] = recognition_result.gestures[hand_index][0].category_name
+                transformed_output["Handedness"] = recognition_result.handedness[
+                    hand_index
+                ][0].category_name
+                transformed_output["Handedness"] = (
+                    "Left" if transformed_output["Handedness"] == "Right" else "Right"
+                )  # Mirror the handedness
+                transformed_output["Gesture_Type"] = recognition_result.gestures[
+                    hand_index
+                ][0].category_name
                 transformed_output["Gesture_Landmarks"] = hand_landmarks
                 transformed_output["Score"] = round(
                     recognition_result.gestures[hand_index][0].score, 2
@@ -109,7 +117,7 @@ class Recognizer:
                         break
 
                 transformed_outputs.append(transformed_output)
-            
+
             transformed_results.append(transformed_outputs)
 
         return transformed_results
@@ -137,8 +145,6 @@ def draw_landmarks(image, hand_landmarks):
         mp_drawing_styles.get_default_hand_landmarks_style(),
         mp_drawing_styles.get_default_hand_connections_style(),
     )
-
-
 
 
 # If more than this within_percentage of the hand appeared in the area, then return true for Area.is_within()
