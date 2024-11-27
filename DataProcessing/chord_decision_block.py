@@ -1,5 +1,5 @@
 from enum import Enum
-from MIDI.player import *
+from MIDI.chord_player import *
 
 
 # Maintain instrument states
@@ -9,7 +9,7 @@ class instrumentState(Enum):
     STRUM_UP = 2
 
 
-# Set of actions that is passed to actor function for execution
+# Set of actions passed to the actor function for execution
 class actions(Enum):
     PLAY = 0
     PLAY_REVERSE = 1
@@ -17,7 +17,7 @@ class actions(Enum):
     NULL = 3
 
 
-# Use current instrument state and prev instrument state to determine corresponding action
+# Use current instrument state and previous instrument state to determine the corresponding action
 """Corresponding action can be determined via: decisionMatrix[prev_state][cur_state] where prev_state and cur_state are instrumentState enums"""
 decisionMatrix = [
     [actions.NULL, actions.PLAY, actions.PLAY_REVERSE],
@@ -25,8 +25,8 @@ decisionMatrix = [
     [actions.STOP, actions.PLAY, actions.NULL],
 ]
 
-# ChordMatrix is currently hard-coded. In the future, it can be read from a file or generated dynamically based on user input.
-"""ChordMatrix[Major][Gesture] to access chord index which and play"""
+# The ChordMatrix is currently hard-coded. In the future, it can be read from a file or generated dynamically based on user input.
+"""ChordMatrix[Major][Gesture] accesses the chord index to be played."""
 chordMatrix = {
     "Major": {"Open_Palm": 0, "Closed_Fist": 1},
     "Minor": {"Open_Palm": 2, "Closed_Fist": 3},
@@ -46,8 +46,8 @@ class decisionBlock:
         self.strum_hand = None
 
     def update_state(self, recognizer_results):
-        if len(recognizer_results) < 2:  # only one hand detected
-            print("udpate state: NEUTRAL")
+        if len(recognizer_results) < 2:  # Only one hand detected
+            print("update state: NEUTRAL")
             self.state = instrumentState.NEUTRAL
         else:
             self.getHands(recognizer_results)
@@ -60,10 +60,10 @@ class decisionBlock:
                 self.state = instrumentState.NEUTRAL
             else:
                 if self.strum_hand.get("Area") == "Strum down":
-                    print("udpate state: SD")
+                    print("update state: STRUM_DOWN")
                     self.state = instrumentState.STRUM_DOWN
                 elif self.strum_hand.get("Area") == "Strum up":
-                    print("udpate state: SU")
+                    print("update state: STRUM_UP")
                     self.state = instrumentState.STRUM_UP
                 else:
                     self.state = instrumentState.NEUTRAL
@@ -72,7 +72,7 @@ class decisionBlock:
         prev_state = self.state
         self.update_state(recognizer_results)
 
-        print("prev state: ", prev_state)
+        print("previous state: ", prev_state)
         print("current state: ", self.state)
 
         action = decisionMatrix[prev_state.value][self.state.value]
@@ -94,15 +94,15 @@ class decisionBlock:
         else:
             None  # Do nothing
 
-    # Depending on action to be performed, call appropriate paly or off function
+    # Depending on action to be performed, call the appropriate play or off function
     def actor(self, perform_action, chord):
         # Switch statement
         if perform_action == actions.PLAY:
             self.play(chord=chord, reverse=False)
-            self.prev_chord_index = chord  # update to current chord index
+            self.prev_chord_index = chord  # Update to current chord
         elif perform_action == actions.PLAY_REVERSE:
             self.play(chord=chord, reverse=True)
-            self.prev_chord_index = chord  # Update to current chord index
+            self.prev_chord_index = chord
         elif perform_action == actions.STOP:
             self.off(chord=self.prev_chord_index)
         else:
@@ -110,7 +110,7 @@ class decisionBlock:
 
     def getHands(
         self, recognizer_results
-    ):  # only call when recognizer_results lenghth==2
+    ):  # Only call when recognizer_results length == 2
         assert len(recognizer_results) == 2
         for hand in recognizer_results:
             if hand.get("Handedness") == "Left":
@@ -118,8 +118,8 @@ class decisionBlock:
             else:
                 self.strum_hand = hand
 
-    # play function
-    def play(self, chord, reverse=False):  # input has to be midi chord (all int notes)
+    # Play function
+    def play(self, chord, reverse=False):  # Input has to be MIDI chord (all int notes)
         if not reverse:
             for note in chord:
                 self.output_port.send(note_on(note=note))
