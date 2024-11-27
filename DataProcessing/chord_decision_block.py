@@ -25,6 +25,7 @@ decisionMatrix = [
     [actions.STOP, actions.PLAY, actions.NULL],
 ]
 
+# ChordMatrix is currently hard-coded. In the future, it can be read from a file or generated dynamically based on user input.
 """ChordMatrix[Major][Gesture] to access chord index which and play"""
 chordMatrix = {
     "Major": {"Open_Palm": 0, "Closed_Fist": 1},
@@ -37,7 +38,7 @@ class decisionBlock:
     def __init__(self, output_port="Logic Pro Virtual In"):
         # Initialize MIDI output port, default is Logic Pro Virtual In
         self.output_port = mido.open_output(output_port)
-        self.chord_list = ["Cmaj", "Fmaj", "Gdom7", "Cmaj"]
+        self.chord_list = ["C", "F", "G", "G7"]
         self.midi_chord_list = convert_chord_to_midi_chord(self.chord_list)
         self.state = instrumentState.NEUTRAL
         self.prev_chord_index = -1  # Initialized to -1 to indicate no previous chord
@@ -109,7 +110,7 @@ class decisionBlock:
 
     def getHands(
         self, recognizer_results
-    ):  # only call when recognizer_results lenght==2
+    ):  # only call when recognizer_results lenghth==2
         assert len(recognizer_results) == 2
         for hand in recognizer_results:
             if hand.get("Handedness") == "Left":

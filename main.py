@@ -4,12 +4,12 @@ import threading
 import queue
 import time
 
+# Import Graphic Modules
 import MediaPipe.argument_parser as argument_parser
 import MediaPipe.graphic as graphic
 
-# import MediaPipe.graphic as graphic
-
-from DataProcessing.decision import decisionBlock
+# Import Decision Block
+from DataProcessing.chord_decision_block import decisionBlock
 
 
 def decision_block(result_event, result_queue, decision_block_object):

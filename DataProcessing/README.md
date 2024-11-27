@@ -1,3 +1,3 @@
-Data Processing
+Data Processing Modules 
 
-This section focuses on translating the movements detected by the camera into chords and their durations
+"All decision blocks for the four instrument classes should be contained here"
