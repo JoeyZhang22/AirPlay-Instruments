@@ -1,3 +1,4 @@
+# Include all data structures and functions to map gestures to chords
 gesture_dict = {
     "open_hand": "C",
     "fist": "D",
