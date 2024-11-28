@@ -1,34 +1,72 @@
 import cv2
-import mediapipe_utils
+import MediaPipe.mediapipe_utils as mediapipe_utils
 
-# Visualization parameters
-row_size = 50  # pixels
-left_margin = 24  # pixels
-text_color = (0, 0, 0)  # black
-font_size = 1
-font_thickness = 1
+# Window parameters
+top_margin = 25  # pixels
+left_margin = 25  # pixels
 
-# Label box parameters
+# Visualization default parameters
+default_text_color = (0, 0, 0)  # black
+default_font_size = 0.5
+default_font_thickness = 1
+
+# Label parameters
 label_text_color = (255, 255, 255)  # white
-label_font_size = 1
-label_thickness = 2
+label_font_size = 0.5
+label_font_thickness = 1
+
+# Division lines parameters
+line_color = (255, 0, 0)  # blue
+line_thickness = 1
+
 
 def open_camera(camera_id, width, height):
-  # Start capturing video input from the camera
-  cap = cv2.VideoCapture(camera_id)
-  cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
-  cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
-  return cap
+    # Start capturing video input from the camera
+    cap = cv2.VideoCapture(camera_id)
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
+    return cap
+
 
 def draw_fps(current_frame, FPS):
-  fps_text = 'FPS = {:.1f}'.format(FPS)
-  text_location = (left_margin, row_size)
-  cv2.putText(current_frame, fps_text, text_location, cv2.FONT_HERSHEY_DUPLEX,
-              font_size, text_color, font_thickness, cv2.LINE_AA)
+    fps_text = "FPS = {:.1f}".format(FPS)
+    text_location = (left_margin, top_margin)
+    draw_text(current_frame, text_location, fps_text)
 
-def draw_gesture_labels(recognition_result_list, current_frame):
+
+def draw_text(
+    current_frame,
+    text_location,
+    text,
+    color=default_text_color,
+    font_size=default_font_size,
+):
+    # Compute text size
+    text_size = cv2.getTextSize(
+        text, cv2.FONT_HERSHEY_DUPLEX, default_font_size, default_font_thickness
+    )[0]
+    text_width, text_height = text_size
+
+    # Boudary protection
+
+    # Draw the text
+    cv2.putText(
+        current_frame,
+        text,
+        text_location,
+        cv2.FONT_HERSHEY_DUPLEX,
+        font_size,
+        color,
+        default_font_thickness,
+        cv2.LINE_AA,
+    )
+
+
+def draw_gesture_labels(recognition_result, current_frame):
     # Draw landmarks and write the text for each hand.
-      for hand_index, hand_landmarks in enumerate(recognition_result_list[0].hand_landmarks):
+    for hand_result in recognition_result:
+        hand_landmarks = hand_result["Gesture_Landmarks"]
+
         # Calculate the bounding box of the hand
         x_min = min([landmark.x for landmark in hand_landmarks])
         y_min = min([landmark.y for landmark in hand_landmarks])
@@ -38,39 +76,69 @@ def draw_gesture_labels(recognition_result_list, current_frame):
         frame_height, frame_width = current_frame.shape[:2]
         x_min_px = int(x_min * frame_width)
         y_min_px = int(y_min * frame_height)
-        y_max_px = int(y_max * frame_height)
 
         # Get gesture classification results
-        if recognition_result_list[0].gestures:
-          gesture = recognition_result_list[0].gestures[hand_index]
-          category_name = gesture[0].category_name
-          handedness = recognition_result_list[0].handedness[hand_index][0].category_name
-          # Mirror the handedness
-          handedness = "Left" if handedness == "Right" else "Right"
-          score = round(gesture[0].score, 2)
-          result_text = f'{handedness} {category_name} ({score})'
+        handedness = hand_result["Handedness"]
+        gesture = hand_result["Gesture_Type"]
+        score = hand_result["Score"]
+        result_text = f"{handedness} {gesture} ({score})"
 
-          # Compute text size
-          text_size = \
-          cv2.getTextSize(result_text, cv2.FONT_HERSHEY_DUPLEX, label_font_size,
-                          label_thickness)[0]
-          text_width, text_height = text_size
+        draw_text(
+            current_frame,
+            (x_min_px, y_min_px - 10),
+            result_text,
+            label_text_color,
+            label_font_size,
+        )
 
-          # Calculate text position (above the hand)
-          text_x = x_min_px
-          text_y = y_min_px - 10  # Adjust this value as needed
+        # Draw Area Name
+        area_text = f'{hand_result["Area"]}'
+        area_text_color = (0, 0, 255)  # red
+        draw_text(
+            current_frame,
+            (x_min_px, y_min_px - 25),
+            area_text,
+            area_text_color,
+            label_font_size,
+        )
 
-          # Make sure the text is within the frame boundaries
-          if text_y < 0:
-            text_y = y_max_px + text_height
-
-          # Draw the text
-          cv2.putText(current_frame, result_text, (text_x, text_y),
-                      cv2.FONT_HERSHEY_DUPLEX, label_font_size,
-                      label_text_color, label_thickness, cv2.LINE_AA)
-      
         # Draw hand landmarks on the frame
         mediapipe_utils.draw_landmarks(current_frame, hand_landmarks)
 
 
-      
+def draw_division_lines(current_frame, areas):
+    """
+    For now, the screen is divided to 6 parts:
+      Top-left:     Strum up
+      Mid-left:     Neutral
+      Bottom-left:  Strump down
+
+      Top-right:     Major
+      Mid-right:     Minor
+      Bottom-right:  Special
+    """
+
+    # Get the size of the frame
+    frame_height, frame_width = current_frame.shape[:2]
+
+    # Draw the mid line
+    cv2.line(
+        current_frame,
+        (frame_width // 2, 0),
+        (frame_width // 2, frame_height),
+        line_color,
+        line_thickness,
+    )
+
+    # Draw Labels for each area
+    area_label_color = (0, 255, 0)  # blue
+    for area in areas:
+        x_min = int(area.x_min * frame_width)
+        x_max = int(area.x_max * frame_width)
+        y_min = int(area.y_min * frame_height)
+        y_max = int(area.y_max * frame_height)
+
+        cv2.line(
+            current_frame, (x_min, y_max), (x_max, y_max), line_color, line_thickness
+        )
+        draw_text(current_frame, (x_min, y_max - 5), area.name, area_label_color, 0.5)
