@@ -9,7 +9,7 @@ def add_argument():
         "--model",
         help="Name of gesture recognition model.",
         required=False,
-        default="gesture_recognizer.task",
+        default="MediaPipe/gesture_recognizer.task",
     )
     parser.add_argument(
         "--numHands",
