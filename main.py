@@ -1,5 +1,3 @@
-# Main scripts
-
 import threading
 import queue
 import time
@@ -8,8 +6,8 @@ import time
 import MediaPipe.argument_parser as argument_parser
 import MediaPipe.graphic as graphic
 
-# Import Decision Block
-from DataProcessing.chord_decision_block import decisionBlock
+# Import Decision Blocks
+from DataProcessing.chord_decision_block import chordDecisionBlock
 
 
 def decision_block(result_event, result_queue, decision_block_object):
@@ -42,7 +40,7 @@ def main():
     result_event = threading.Event()
 
     # Initialize Decision Block
-    decision_block_object = decisionBlock()
+    decision_block_object = chordDecisionBlock()
 
     # Create a thread to run graphic.run_graphic
     decision_thread = threading.Thread(

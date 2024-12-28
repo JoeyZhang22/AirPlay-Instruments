@@ -34,7 +34,7 @@ chordMatrix = {
 }
 
 
-class decisionBlock:
+class chordDecisionBlock:
     def __init__(self, output_port="Logic Pro Virtual In"):
         # Initialize MIDI output port, default is Logic Pro Virtual In
         self.output_port = mido.open_output(output_port)
