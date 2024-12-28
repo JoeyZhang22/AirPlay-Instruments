@@ -26,9 +26,6 @@ ___
 
 Follow these steps to get started with AirPlay Instruments:
 
-### 1. Clone the Repository
-First, clone the GitHub repository to your local machine:
-
 ```bash
 #Clone Repo
 git clone https://github.com/JoeyZhang22/AirPlay-Instruments.git
