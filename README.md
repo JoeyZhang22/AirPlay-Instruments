@@ -2,60 +2,52 @@
 
 **AirPlay Instruments** is a capstone project dedicated to enhancing the accessibility, ease of use, and expressiveness of musical instruments for musicians of all levels. By leveraging computer vision, radar technology, and MIDI interfaces, we aim to develop an all-in-one HCI tool that allows users to input musical information with ease, whether they are traveling musicians, producers, or beginners exploring music without the need for expensive production tools (e.g., MIDI controller keyboards, pads, actual instruments, microphones, etc.).
 
----
+Welcome to AirPlay Instruments!
 
-# Team Organization
+## Project Goals
+The project proves three main ways to provide unique ways for users to input musical information. 
+1. Chord based instrument
+    - Provide an intuitive way to play harmonic instruments like guitar or piano.
+    - Allow users to map gestures that trigger different chords
+2. Percussive instrument
+    - Enable users to trigger percussion sounds
+    - Allow for mapping of gestures and movements to trigger different percussive instruments
+3. Expressive instrument
+    - Allow users to control expressive musical qualities like pitch bending and vibrato.
+    - Ensure seamless MIDI CC (Control Change) messages for expressive parameters.
 
-Our team consists of four undergrad students from ECE. Our respective contributions to the project will be through the following areas of expertise:
+___
 
-### Technical Roles (Domain Expertise)
+## Project Demo
 
-1. Tangia Zhou: rader interface
-2. Logan Clarke: data processing
-3. Joey Zhang: midi interface into DAW
-4. Nick Lin: computer vision
+[![AirPlay Instruments Demo](https://i9.ytimg.com/vi_webp/exurCb0tvK4/mq2.webp?sqp=CMS4wbsG-oaymwEmCMACELQB8quKqQMa8AEB-AHeCIAC0AWKAgwIABABGGUgYShQMA8=&rs=AOn4CLD5aI6gSZ01VDShcNZcgUTeSVDFzA)](https://youtu.be/exurCb0tvK4)
 
-### Team Roles (Operations)
+## Run AirPlay Instruments
 
-- Leader/Project Manager
-- Administrator
-- Code Maintainer
-- Product Validator
+Follow these steps to get started with AirPlay Instruments:
 
----
+### 1. Clone the Repository
+First, clone the GitHub repository to your local machine:
 
-# Status Tracker
+```bash
+#Clone Repo
+git clone https://github.com/JoeyZhang22/AirPlay-Instruments.git
+cd AirPlay-Instruments
 
-## Weekly Status Update:
+# Create a virtual environment
+python -m venv venv
 
-|       Week/Date        | Joey | Nick | Tangia | Logan |
-| :--------------------: | :--: | :--: | :----: | :---: |
-| Week 0 (Sep 2th, 2024) |      |      |        |       |
-|         Week 1         |      |      |        |       |
-|         Week 2         |      |      |        |       |
+# Activate the virtual environment
+# On Linux/Mac:
+source venv/bin/activate
+# On Windows:
+venv\Scripts\activate
 
-## Deliverables and Deadlines
+#Run
+python main.py
+```
 
-| Deliverable              | Date | Information | Assignee |
-|:------------------------:|:----:|:-----------:|:--------:|
-| ~~Research on sensors~~      | TBD  | ~~Identify sensors for high-speed movement capture and directionality~~ | Team |
-| ~~Project overview meeting~~ | TBD  | ~~Review initial project scope and objectives~~ | Team |
-| ~~Component Requirements~~ | Sept. 11th Wednesday| Nick(CV), Logan + Tangia (Decision Block, Joey (MIDI))| Team |
-| Develop Screen Division coordinate system| September 25th  | Ouput hand position in terms of division on camera caputure (ie. left box, right box, etc.) | Nick | 
-| Chord Library | September 25th  | Have chord library developed with capability to output any chord for 12 scales | Joey | 
-| Decision Block research | September 25th  | Create the architecture, structure for classes and functions compatible with screen division, and define contraints for maximum speed and mapping to max velocity for MIDI  | Tangia/Logan |
-
-## High-Level Reminders
-
-- Weekly meeting with Prof. Adve on **Wednesdays @ 3:00 PM**.
-- Status update meetings during ECE496 lecture blocks.
-
----
-
-# Resources
-
-Feel free to add any useful resources for code, libraries, and reading materials here!
-
+# Resources Used
 ## MIDI
 
 - [MIDO Documentation](https://mido.readthedocs.io/en/stable/index.html)
