@@ -2,11 +2,15 @@
 import copy
 import time
 
-import mediapipe as mp
+from typing import List
 
+import numpy as np
+
+import mediapipe as mp
 from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
 from mediapipe.framework.formats import landmark_pb2
+from mediapipe.framework.formats.landmark_pb2 import NormalizedLandmark
 
 mp_hands = mp.solutions.hands
 mp_drawing = mp.solutions.drawing_utils
@@ -79,6 +83,7 @@ class Recognizer:
         "Gesture_Landmarks" :
         "Score" :
         "Time" :
+        "Finger_Status" :
         }
         """
 
@@ -182,3 +187,74 @@ class Area:
         self, current_frame, frame_width, frame_height, line_color, text_color
     ):
         return
+
+# Better Finger Detection
+def calculate_vector(p1: NormalizedLandmark, p2: NormalizedLandmark) -> np.ndarray:
+    """Calculate the vector from p1 to p2."""
+    return np.array([p2.x - p1.x, p2.y - p1.y, p2.z - p1.z])
+
+def calculate_angle(v1: np.ndarray, v2: np.ndarray) -> float:
+    """Calculate the angle between two vectors."""
+    v1_norm = np.linalg.norm(v1)
+    v2_norm = np.linalg.norm(v2)
+    if v1_norm == 0 or v2_norm == 0:
+        return 0.0
+    cos_theta = np.dot(v1, v2) / (v1_norm * v2_norm)
+    return np.arccos(cos_theta) * 180.0 / np.pi
+
+def is_finger_up(hand_landmarks: List[NormalizedLandmark]) -> dict:
+    """
+    Determine whether each finger is extended (up) using hand landmarks and relative angles.
+
+    Parameters:
+        hand_landmarks (List[NormalizedLandmark]): List of 21 hand landmarks.
+
+    Returns:
+        dict: A dictionary indicating if each finger is extended (True or False).
+    """
+    fingers_status = {
+        "thumb": False,
+        "index": False,
+        "middle": False,
+        "ring": False,
+        "pinky": False
+    }
+
+    # Palm base vector (wrist to palm center)
+    wrist = hand_landmarks[0]
+    palm_base = hand_landmarks[9]  # Landmark at the center of the palm
+    palm_vector = calculate_vector(wrist, palm_base)
+
+    # Thumb detection
+    thumb_tip = hand_landmarks[4]
+    thumb_ip = hand_landmarks[3]
+    thumb_mcp = hand_landmarks[2]
+    thumb_cmc = hand_landmarks[1]
+
+    thumb_tip_to_ip = calculate_vector(thumb_tip, thumb_ip)
+    thumb_cmc_to_mcp = calculate_vector(thumb_cmc, thumb_mcp)
+    thumb_angle = calculate_angle(thumb_tip_to_ip, thumb_cmc_to_mcp)
+    fingers_status["thumb"] = thumb_angle > 140  # Angle threshold for extended thumb
+
+    # Fingers detection (Index, Middle, Ring, Pinky)
+    for finger, (tip_idx, pip_idx, mcp_idx) in zip(
+        ["index", "middle", "ring", "pinky"],
+        [(8, 6, 5), (12, 10, 9), (16, 14, 13), (20, 18, 17)]
+    ):
+        tip = hand_landmarks[tip_idx]
+        pip = hand_landmarks[pip_idx]
+        mcp = hand_landmarks[mcp_idx]
+
+        # Calculate vectors
+        tip_to_pip = calculate_vector(tip, pip)
+        mcp_to_pip = calculate_vector(mcp, pip)
+
+        # Calculate angle between segments
+        segment_angle = calculate_angle(mcp_to_pip, tip_to_pip)
+
+        # Finger is extended if the angle is close to 180 degrees and the tip is farther from the wrist along the palm vector's direction
+        wrist_to_tip = calculate_vector(wrist, tip)
+        projection = np.dot(wrist_to_tip, palm_vector) / np.linalg.norm(palm_vector)
+        fingers_status[finger] = segment_angle > 160 and projection > 0
+
+    return fingers_status
