@@ -107,7 +107,6 @@ def draw_gesture_labels(recognition_result, current_frame):
 
         # Test Finger up
         finger_status = mediapipe_utils.is_finger_up(hand_landmarks)
-        print(finger_status)
         hand_result["Finger_Status"] = finger_status
 
 
