@@ -26,7 +26,7 @@ decisionMatrix = [
 ]
 
 # The ChordMatrix is currently hard-coded. In the future, it can be read from a file or generated dynamically based on user input.
-"""ChordMatrix[Major][Gesture] accesses the chord index to be played."""
+"""ChordMatrix[Area][Gesture] accesses the chord index to be played."""
 chordMatrix = {
     "Major": {"Open_Palm": 0, "Closed_Fist": 1},
     "Minor": {"Open_Palm": 2, "Closed_Fist": 3},
