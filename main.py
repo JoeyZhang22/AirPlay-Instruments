@@ -67,6 +67,7 @@ def main():
         result_queue,  # Queue object for passing results
         result_event,  # Event object for signaling
         args.handedness,
+        "Percussion",   # Insturment Mode, "Percussion" or "Expressive"
     )
 
 

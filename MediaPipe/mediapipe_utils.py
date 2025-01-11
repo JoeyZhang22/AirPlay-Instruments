@@ -3,6 +3,7 @@ import copy
 import time
 
 from typing import List
+from enum import Enum
 
 import numpy as np
 
@@ -155,28 +156,40 @@ def draw_landmarks(image, hand_landmarks):
 # If more than this within_percentage of the hand appeared in the area, then return true for Area.is_within()
 within_percentage = 0.8
 
-
+# Class for screen division
 class Area:
-    def __init__(self, name, x_min, y_min, x_max, y_max):
+    def __init__(self, name, type="Rectangle", x_min=-1, y_min=-1, x_max=-1, y_max=-1, radius=-1, center=(-1,-1)):
         self.name = name
+        self.type = type
 
-        # Dimensions are in normalized form (i.e. 0-1)
+        # Dimensions are in normalized form (i.e. 0.0-1.0)
         self.x_min = x_min
         self.y_min = y_min
         self.x_max = x_max
         self.y_max = y_max
 
+        self.radius = radius
+        self.center = center
+
     def is_within(self, hand_landmarks):
         counter = 0
 
-        for landmark in hand_landmarks:
-            if (
-                landmark.x > self.x_min
-                and landmark.x < self.x_max
-                and landmark.y > self.y_min
-                and landmark.y < self.y_max
-            ):
-                counter += 1
+        if self.type is "Rectangle":
+            for landmark in hand_landmarks:
+                if (
+                    landmark.x > self.x_min
+                    and landmark.x < self.x_max
+                    and landmark.y > self.y_min
+                    and landmark.y < self.y_max
+                ):
+                    counter += 1
+        else:
+            for landmark in hand_landmarks:
+                center_x, center_y = self.center
+                distance_squared = (landmark.x - center_x)**2 + (landmark.y - center_y)**2
+                if distance_squared <= self.radius**2:
+                    counter += 1
+                
 
         if counter >= len(hand_landmarks) * within_percentage:
             return True
