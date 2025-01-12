@@ -10,6 +10,7 @@ def generate_chord_matrix():
         "ILoveYou": None
     }
 
+    # Base chord list
     chord_list = ["C", "D", "E", "F", "G", "A", "B"]
 
     # Function to display the current gesture-to-chord mappings
@@ -23,7 +24,7 @@ def generate_chord_matrix():
         for gesture in gesture_to_chord:
             print(f"{gesture}")
 
-        gesture = input("\nEnter the gesture you'd like to map (e.g., 'Closed_Fist'): ")
+        gesture = input("\nEnter the gesture you'd like to map (e.g., 'Closed_Fist', 'Open_Palm'): ")
 
         if gesture in gesture_to_chord:
             chord = input(f"Enter the chord you'd like to map to {gesture}: ")
@@ -48,9 +49,9 @@ def generate_chord_matrix():
     }
 
     for gesture, chord in gesture_to_chord.items():
-        chord_matrix["Major"][gesture] = chord if chord else "None"
-        chord_matrix["Minor"][gesture] = (chord + "m") if chord else "None"
-        chord_matrix["Special"][gesture] = (chord + "7") if chord else "None"
+        chord_matrix["Major"][gesture] = chord if chord else None
+        chord_matrix["Minor"][gesture] = (chord + "m") if chord else None
+        chord_matrix["Special"][gesture] = (chord + "7") if chord else None
 
     print("Final Chord Matrix:")
     for chord_type, mappings in chord_matrix.items():
@@ -61,4 +62,14 @@ def generate_chord_matrix():
     
     return chord_matrix
 
-final_chord_matrix = generate_chord_matrix()
+chordMatrix = generate_chord_matrix()
+
+# Takes in chord matrix and lists all chords
+def chords_list(chord_matrix):
+    all_chords = set()
+    for mappings in chord_matrix.values():
+        all_chords.update(chord for chord in mappings.values() if chord is not None)
+    return list(all_chords)
+
+chord_list = chords_list(chordMatrix)
+print(chord_list)
