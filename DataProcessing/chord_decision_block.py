@@ -113,7 +113,7 @@ class chordDecisionBlock:
         # Initialize MIDI output port, default is Logic Pro Virtual In
         self.output_port = mido.open_output(output_port)
         self.chord_list = chord_list # Changed from previous hardcoded list
-        self.midi_chord_list = convert_chord_to_midi_chord(self.chord_list)
+        self.midi_chord_dict = convert_chord_to_midi_chord(self.chord_list)
         self.state = instrumentState.NEUTRAL
         self.prev_chord_index = -1  # Initialized to -1 to indicate no previous chord
         self.chord_hand = None
@@ -163,7 +163,7 @@ class chordDecisionBlock:
             print("left hand area: ", area)
             print("right hand gesture: ", self.strum_hand.get("Gesture_Type"))
             print("right hand area: ", self.strum_hand.get("Area"))
-            chord = chordMatrix[area][gesture]
+            chord = self.midi_chord_dict.get(chordMatrix[area][gesture])
             self.actor(perform_action=action, chord=chord)
         else:
             None  # Do nothing

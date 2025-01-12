@@ -1,3 +1,5 @@
+# Everything in this file has been moved to chord_decision_block.py
+
 def generate_chord_matrix():
     # Initial dictionary for gesture-to-chord mappings
     gesture_to_chord = {
