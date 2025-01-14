@@ -25,6 +25,7 @@ decisionMatrix = [
     [actions.STOP, actions.PLAY, actions.NULL],
 ]
 
+####LEGACY CODE####
 # # The ChordMatrix is currently hard-coded. In the future, it can be read from a file or generated dynamically based on user input.
 # """ChordMatrix[Area][Gesture] accesses the chord index to be played."""
 # chordMatrix = {
@@ -42,7 +43,8 @@ def generate_chord_matrix():
         "Thumb_Down": None,
         "Thumb_Up": None,
         "Victory": None,
-        "ILoveYou": None
+        "ILoveYou": None,
+        "None": None
     }
 
     # Base chord list
@@ -109,7 +111,7 @@ chord_list = chords_list(chordMatrix)
 print(chord_list)
 
 class chordDecisionBlock:
-    def __init__(self, output_port="loopMIDI Port 1"):
+    def __init__(self, output_port="Logic Pro Virtual In"): # "Logic Pro Virtual In"
         # Initialize MIDI output port, default is Logic Pro Virtual In
         self.output_port = mido.open_output(output_port)
         self.chord_list = chord_list # Changed from previous hardcoded list
