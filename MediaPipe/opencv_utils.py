@@ -163,10 +163,15 @@ def draw_division_lines(current_frame, areas):
             y_min = int(area.y_min * frame_height)
             y_max = int(area.y_max * frame_height)
 
-            draw_dashed_line(current_frame, (x_min, y_min), (x_max, y_min), line_color, line_thickness)
-            draw_dashed_line(current_frame, (x_min, y_max), (x_max, y_max), line_color, line_thickness)
-            draw_dashed_line(current_frame, (x_max, y_min), (x_max, y_max), line_color, line_thickness)
+            if y_min != 0:
+                draw_dashed_line(current_frame, (x_min, y_min), (x_max, y_min), line_color, line_thickness)
 
+            if y_max != 1:
+                draw_dashed_line(current_frame, (x_min, y_max), (x_max, y_max), line_color, line_thickness)
+
+            if x_max != 1:
+                draw_dashed_line(current_frame, (x_max, y_min), (x_max, y_max), line_color, line_thickness)
+            
             draw_text(current_frame, (x_min + 2, y_max - 5), area.name, area_label_color, 0.5)
         elif area.type == "Circle" or area.type == "Corner":
             normalized_x, normalized_y = area.center
