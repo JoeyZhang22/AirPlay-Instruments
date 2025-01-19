@@ -98,7 +98,7 @@ def generate_chord_matrix():
     # print(chord_matrix)
     return chord_matrix
 
-chordMatrix = generate_chord_matrix()
+# chordMatrix = generate_chord_matrix()
 
 # Takes in chord matrix and lists all chords
 def chords_list(chord_matrix):

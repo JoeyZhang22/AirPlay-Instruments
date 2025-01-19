@@ -39,20 +39,20 @@ def populate_chord_names(names):
 
 def populate_percersive_names(corner_names, top_circle_names, bottom_circle_names):
     # Top Corners
-    corner_names.append("Crash")
-    corner_names.append("Ride")
+    corner_names.append("Crash Right")
+    corner_names.append("Ride Bell")
 
     # Bottom Corners
-    corner_names.append("High-Hat")
-    corner_names.append("Low Tom")
+    corner_names.append("Hi-Hat Open")
+    corner_names.append("Tom Low")
 
     # Top Circles
-    top_circle_names.append("High Tom")
-    top_circle_names.append("Mid Tom")
+    top_circle_names.append("Tom Mid High")
+    top_circle_names.append("Tom High")
 
     # Bottom Circles
-    bottom_circle_names.append("Snare")
-    bottom_circle_names.append("Bass")
+    bottom_circle_names.append("Snare Center")
+    bottom_circle_names.append("Kick")
 
 
 def define_areas(handedness, instrument_type):
