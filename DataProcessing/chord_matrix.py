@@ -1,6 +1,9 @@
 # Everything in this file has been moved to chord_decision_block.py
 
 def generate_chord_matrix():
+    # Base chord list
+    chord_list = ["Gb", "Db", "Ab", "Eb", "Bb", "F", "C", "G", "D", "A", "E", "B", "F#", "C#", "G#", "D#", "A#"]
+
     # Initial dictionary for gesture-to-chord mappings
     gesture_to_chord = {
         "Closed_Fist": None, 
@@ -9,11 +12,67 @@ def generate_chord_matrix():
         "Thumb_Down": None,
         "Thumb_Up": None,
         "Victory": None,
-        "ILoveYou": None
+        "ILoveYou": None,
+        "None": None
     }
 
-    # Base chord list
-    chord_list = ["C", "D", "E", "F", "G", "A", "B"]
+    chord_types = {
+        "Major": "",
+        "Minor": "m",
+        "Minor7": "m7",
+        "Major7": "M7",
+        "Dominant7": "7",
+        "Diminished7": "dim7",
+        "Hitchcock": "mM7",
+        "Augmented": "+",
+        "Augmented7#5": "7#5",
+        "AugmentedM7#": "M7+",
+        "Augmentedm7+": "m7+",
+        "Augmented7+": "7+",
+        "Suspended4": "sus4",
+        "Suspended2": "sus2",
+        "Suspended47": "sus47",
+        "Suspended11": "11",
+        "Suspended4b9": "sus4b9",
+        "Suspendedb9": "susb9",
+        "Six": "6",
+        "Minor6": "m6",
+        "Major6": "M6",
+        "SevenSix": "67",
+        "SixNine": "69",
+        "Nine": "9",
+        "Major9": "M9",
+        "Dominant7b9": "7b9",
+        "Dominant7#9": "7#9",
+        "Eleven": "11",
+        "Dominant7#11": "7#11",
+        "Minor11": "m11", 
+        "Thirteen": "13",
+        "Major13": "M13",
+        "Minor13": "m13",
+        "Dominant7b5": "7b5",
+        "NC": "NC",
+        "Hendrix": "hendrix",
+        "Power": "5"
+    }
+
+    def input_chord_types(section_name, options):
+        print(f"Available chord types: {', '.join(options)}")
+        
+        while True:
+            choice = input(f"Enter your choice for the {section_name} section: ").strip()
+            if choice in options:
+                print(f"You selected '{choice}' for the {section_name} section.")
+                return choice
+            else:
+                print("Invalid choice. Please type the name of a chord from the list.")
+
+    selected_chord_types = [] # Section selections
+
+    sections = ["Top", "Middle", "Bottom"]
+    for section in sections:
+        chord_type = input_chord_types(section, chord_types.keys())
+        selected_chord_types.append(chord_type)
 
     # Function to display the current gesture-to-chord mappings
     def display_mappings(gesture_to_chord):
@@ -44,23 +103,16 @@ def generate_chord_matrix():
         if continue_mapping != 'yes':
             break
 
-    chord_matrix = {
-            "Major": {},
-            "Minor": {},
-            "Special": {},
-    }
+    chord_matrix = {chord_type: {} for chord_type in selected_chord_types}
 
     for gesture, chord in gesture_to_chord.items():
-        chord_matrix["Major"][gesture] = chord if chord else None
-        chord_matrix["Minor"][gesture] = (chord + "m") if chord else None
-        chord_matrix["Special"][gesture] = (chord + "7") if chord else None
+        for chord_type in selected_chord_types:
+            suffix = chord_types[chord_type]
+            chord_matrix[chord_type][gesture] = (chord + suffix) if chord else None
 
     print("Final Chord Matrix:")
-    for chord_type, mappings in chord_matrix.items():
-        print(f"\n{chord_type} Chords:")
-        for gesture, chord in mappings.items():
-            print(f"  {gesture}: {chord}")
-    # print(chord_matrix)
+    for section, mapping in chord_matrix.items():
+        print(f"{section}: {mapping}")
     
     return chord_matrix
 
