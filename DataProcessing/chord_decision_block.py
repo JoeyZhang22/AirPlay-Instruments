@@ -17,8 +17,11 @@ class actions(Enum):
     NULL = 3
 
 
-# Use current instrument state and previous instrument state to determine the corresponding action
-"""Corresponding action can be determined via: decisionMatrix[prev_state][cur_state] where prev_state and cur_state are instrumentState enums"""
+# Use current instrument state and previous instrument state to 
+# determine the corresponding action
+"""Corresponding action can be determined via: 
+decisionMatrix[prev_state][cur_state] where 
+prev_state and cur_state are instrumentState enums"""
 decisionMatrix = [
     [actions.NULL, actions.PLAY, actions.PLAY_REVERSE],
     [actions.STOP, actions.NULL, actions.PLAY_REVERSE],

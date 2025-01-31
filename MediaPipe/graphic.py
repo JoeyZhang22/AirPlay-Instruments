@@ -2,6 +2,10 @@ import sys
 import time
 
 import cv2
+import socket
+import struct
+
+import cv2
 import MediaPipe.mediapipe_utils as mediapipe_utils
 import MediaPipe.opencv_utils as opencv_utils
 
@@ -11,6 +15,18 @@ division_area = mediapipe_utils.Area
 COUNTER, FPS = 0, 0
 START_TIME = time.time()
 FPS_REFREASH_COUNT = 10
+
+# Create a socket object
+server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+host_name = socket.gethostname()
+host_ip = socket.gethostbyname(host_name)
+port = 60003
+socket_address = (host_ip, port)
+server_socket.bind(socket_address)
+server_socket.listen(5)
+print(f"Listening at {socket_address}")
+client_socket, addr = server_socket.accept()
+print(f"Connection from: {addr}")
 
 
 # update FPS on display
@@ -176,7 +192,20 @@ def run_graphic(
         if recognition_frame is not None:
             # Standarize resolution
             resized_frame = cv2.resize(recognition_frame, (1440, 900))
-            cv2.imshow("gesture_recognition", resized_frame)
+            # cv2.imshow("gesture_recognition", resized_frame)
+
+            # Compress the frame into JPEG format (adjust quality as needed)
+            encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 90]  # Quality from 0 to 100
+            _, buffer = cv2.imencode('.jpg', resized_frame, encode_param)
+
+            # Pack the length of the compressed data
+            message_size = struct.pack("L", len(buffer))
+
+            # Send the message size and the compressed frame data
+            client_socket.sendall(message_size + buffer.tobytes())
+
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
 
         # Stop the program if the ESC key is pressed.
         if cv2.waitKey(1) == 27:

@@ -1,6 +1,9 @@
 import cv2
 import socket
 import struct
+import threading
+import queue
+import time
 
 # Create a socket object
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -33,8 +36,6 @@ while cap.isOpened():
     # Send the message size and the compressed frame data
     client_socket.sendall(message_size + buffer.tobytes())
 
-    # Display the frame (optional)
-    cv2.imshow('Sending Frame', frame)
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
