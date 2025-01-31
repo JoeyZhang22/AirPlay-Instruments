@@ -152,6 +152,10 @@ def generate_chord_matrix():
             chord = input(f"Enter the chord for {gesture}: ").strip()
             custom_mapping[gesture] = chord
 
+            print("\nCurrent Mapping:")
+            for g, c in custom_mapping.items():
+                print(f"  {g}: {c}")
+
         return custom_mapping if custom_mapping else default_gesture_to_chord
 
     gesture_to_chord = get_gesture_mapping()
