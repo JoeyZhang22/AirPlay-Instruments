@@ -16,6 +16,7 @@ import Cocoa
 import AVFoundation
 import AppKit
 import Foundation
+import Network
 
 
 /*
@@ -146,8 +147,10 @@ class NextViewController: NSViewController {
         
     }
     @objc func goToNextPage() {
-        let runController = RunController()
-        self.view.window?.contentViewController = runController
+//        let runController = RunController()
+//        self.view.window?.contentViewController = runController
+        
+        startClient()
     }
     
     

@@ -7,62 +7,62 @@
 	objects = {
 
 /* Begin PBXContainerItemProxy section */
-		843B60192D31CFA1006FAC92 /* PBXContainerItemProxy */ = {
+		251AD8C82D4448960082DD5E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 843B5FFF2D31CFA0006FAC92 /* Project object */;
+			containerPortal = 251AD8AE2D4448950082DD5E /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 843B60062D31CFA0006FAC92;
-			remoteInfo = airplayinst;
+			remoteGlobalIDString = 251AD8B52D4448950082DD5E;
+			remoteInfo = AirplayInst;
 		};
-		843B60232D31CFA1006FAC92 /* PBXContainerItemProxy */ = {
+		251AD8D22D4448960082DD5E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 843B5FFF2D31CFA0006FAC92 /* Project object */;
+			containerPortal = 251AD8AE2D4448950082DD5E /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 843B60062D31CFA0006FAC92;
-			remoteInfo = airplayinst;
+			remoteGlobalIDString = 251AD8B52D4448950082DD5E;
+			remoteInfo = AirplayInst;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		843B60072D31CFA0006FAC92 /* airplayinst.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = airplayinst.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		843B60182D31CFA1006FAC92 /* airplayinstTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = airplayinstTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		843B60222D31CFA1006FAC92 /* airplayinstUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = airplayinstUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		251AD8B62D4448950082DD5E /* AirplayInst.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AirplayInst.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		251AD8C72D4448960082DD5E /* AirplayInstTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AirplayInstTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		251AD8D12D4448960082DD5E /* AirplayInstUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AirplayInstUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		843B60092D31CFA0006FAC92 /* airplayinst */ = {
+		251AD8B82D4448950082DD5E /* AirplayInst */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = airplayinst;
+			path = AirplayInst;
 			sourceTree = "<group>";
 		};
-		843B601B2D31CFA1006FAC92 /* airplayinstTests */ = {
+		251AD8CA2D4448960082DD5E /* AirplayInstTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = airplayinstTests;
+			path = AirplayInstTests;
 			sourceTree = "<group>";
 		};
-		843B60252D31CFA1006FAC92 /* airplayinstUITests */ = {
+		251AD8D42D4448960082DD5E /* AirplayInstUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = airplayinstUITests;
+			path = AirplayInstUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		843B60042D31CFA0006FAC92 /* Frameworks */ = {
+		251AD8B32D4448950082DD5E /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		843B60152D31CFA1006FAC92 /* Frameworks */ = {
+		251AD8C42D4448960082DD5E /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		843B601F2D31CFA1006FAC92 /* Frameworks */ = {
+		251AD8CE2D4448960082DD5E /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -72,22 +72,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		843B5FFE2D31CFA0006FAC92 = {
+		251AD8AD2D4448950082DD5E = {
 			isa = PBXGroup;
 			children = (
-				843B60092D31CFA0006FAC92 /* airplayinst */,
-				843B601B2D31CFA1006FAC92 /* airplayinstTests */,
-				843B60252D31CFA1006FAC92 /* airplayinstUITests */,
-				843B60082D31CFA0006FAC92 /* Products */,
+				251AD8B82D4448950082DD5E /* AirplayInst */,
+				251AD8CA2D4448960082DD5E /* AirplayInstTests */,
+				251AD8D42D4448960082DD5E /* AirplayInstUITests */,
+				251AD8B72D4448950082DD5E /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		843B60082D31CFA0006FAC92 /* Products */ = {
+		251AD8B72D4448950082DD5E /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				843B60072D31CFA0006FAC92 /* airplayinst.app */,
-				843B60182D31CFA1006FAC92 /* airplayinstTests.xctest */,
-				843B60222D31CFA1006FAC92 /* airplayinstUITests.xctest */,
+				251AD8B62D4448950082DD5E /* AirplayInst.app */,
+				251AD8C72D4448960082DD5E /* AirplayInstTests.xctest */,
+				251AD8D12D4448960082DD5E /* AirplayInstUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -95,134 +95,134 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		843B60062D31CFA0006FAC92 /* airplayinst */ = {
+		251AD8B52D4448950082DD5E /* AirplayInst */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 843B602C2D31CFA1006FAC92 /* Build configuration list for PBXNativeTarget "airplayinst" */;
+			buildConfigurationList = 251AD8DB2D4448960082DD5E /* Build configuration list for PBXNativeTarget "AirplayInst" */;
 			buildPhases = (
-				843B60032D31CFA0006FAC92 /* Sources */,
-				843B60042D31CFA0006FAC92 /* Frameworks */,
-				843B60052D31CFA0006FAC92 /* Resources */,
+				251AD8B22D4448950082DD5E /* Sources */,
+				251AD8B32D4448950082DD5E /* Frameworks */,
+				251AD8B42D4448950082DD5E /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				843B60092D31CFA0006FAC92 /* airplayinst */,
+				251AD8B82D4448950082DD5E /* AirplayInst */,
 			);
-			name = airplayinst;
+			name = AirplayInst;
 			packageProductDependencies = (
 			);
-			productName = airplayinst;
-			productReference = 843B60072D31CFA0006FAC92 /* airplayinst.app */;
+			productName = AirplayInst;
+			productReference = 251AD8B62D4448950082DD5E /* AirplayInst.app */;
 			productType = "com.apple.product-type.application";
 		};
-		843B60172D31CFA1006FAC92 /* airplayinstTests */ = {
+		251AD8C62D4448960082DD5E /* AirplayInstTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 843B602F2D31CFA1006FAC92 /* Build configuration list for PBXNativeTarget "airplayinstTests" */;
+			buildConfigurationList = 251AD8DE2D4448960082DD5E /* Build configuration list for PBXNativeTarget "AirplayInstTests" */;
 			buildPhases = (
-				843B60142D31CFA1006FAC92 /* Sources */,
-				843B60152D31CFA1006FAC92 /* Frameworks */,
-				843B60162D31CFA1006FAC92 /* Resources */,
+				251AD8C32D4448960082DD5E /* Sources */,
+				251AD8C42D4448960082DD5E /* Frameworks */,
+				251AD8C52D4448960082DD5E /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				843B601A2D31CFA1006FAC92 /* PBXTargetDependency */,
+				251AD8C92D4448960082DD5E /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				843B601B2D31CFA1006FAC92 /* airplayinstTests */,
+				251AD8CA2D4448960082DD5E /* AirplayInstTests */,
 			);
-			name = airplayinstTests;
+			name = AirplayInstTests;
 			packageProductDependencies = (
 			);
-			productName = airplayinstTests;
-			productReference = 843B60182D31CFA1006FAC92 /* airplayinstTests.xctest */;
+			productName = AirplayInstTests;
+			productReference = 251AD8C72D4448960082DD5E /* AirplayInstTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		843B60212D31CFA1006FAC92 /* airplayinstUITests */ = {
+		251AD8D02D4448960082DD5E /* AirplayInstUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 843B60322D31CFA1006FAC92 /* Build configuration list for PBXNativeTarget "airplayinstUITests" */;
+			buildConfigurationList = 251AD8E12D4448960082DD5E /* Build configuration list for PBXNativeTarget "AirplayInstUITests" */;
 			buildPhases = (
-				843B601E2D31CFA1006FAC92 /* Sources */,
-				843B601F2D31CFA1006FAC92 /* Frameworks */,
-				843B60202D31CFA1006FAC92 /* Resources */,
+				251AD8CD2D4448960082DD5E /* Sources */,
+				251AD8CE2D4448960082DD5E /* Frameworks */,
+				251AD8CF2D4448960082DD5E /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				843B60242D31CFA1006FAC92 /* PBXTargetDependency */,
+				251AD8D32D4448960082DD5E /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				843B60252D31CFA1006FAC92 /* airplayinstUITests */,
+				251AD8D42D4448960082DD5E /* AirplayInstUITests */,
 			);
-			name = airplayinstUITests;
+			name = AirplayInstUITests;
 			packageProductDependencies = (
 			);
-			productName = airplayinstUITests;
-			productReference = 843B60222D31CFA1006FAC92 /* airplayinstUITests.xctest */;
+			productName = AirplayInstUITests;
+			productReference = 251AD8D12D4448960082DD5E /* AirplayInstUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		843B5FFF2D31CFA0006FAC92 /* Project object */ = {
+		251AD8AE2D4448950082DD5E /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1620;
 				LastUpgradeCheck = 1620;
 				TargetAttributes = {
-					843B60062D31CFA0006FAC92 = {
+					251AD8B52D4448950082DD5E = {
 						CreatedOnToolsVersion = 16.2;
 					};
-					843B60172D31CFA1006FAC92 = {
+					251AD8C62D4448960082DD5E = {
 						CreatedOnToolsVersion = 16.2;
-						TestTargetID = 843B60062D31CFA0006FAC92;
+						TestTargetID = 251AD8B52D4448950082DD5E;
 					};
-					843B60212D31CFA1006FAC92 = {
+					251AD8D02D4448960082DD5E = {
 						CreatedOnToolsVersion = 16.2;
-						TestTargetID = 843B60062D31CFA0006FAC92;
+						TestTargetID = 251AD8B52D4448950082DD5E;
 					};
 				};
 			};
-			buildConfigurationList = 843B60022D31CFA0006FAC92 /* Build configuration list for PBXProject "airplayinst" */;
+			buildConfigurationList = 251AD8B12D4448950082DD5E /* Build configuration list for PBXProject "AirplayInst" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				Base,
 			);
-			mainGroup = 843B5FFE2D31CFA0006FAC92;
+			mainGroup = 251AD8AD2D4448950082DD5E;
 			minimizedProjectReferenceProxies = 1;
 			preferredProjectObjectVersion = 77;
-			productRefGroup = 843B60082D31CFA0006FAC92 /* Products */;
+			productRefGroup = 251AD8B72D4448950082DD5E /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				843B60062D31CFA0006FAC92 /* airplayinst */,
-				843B60172D31CFA1006FAC92 /* airplayinstTests */,
-				843B60212D31CFA1006FAC92 /* airplayinstUITests */,
+				251AD8B52D4448950082DD5E /* AirplayInst */,
+				251AD8C62D4448960082DD5E /* AirplayInstTests */,
+				251AD8D02D4448960082DD5E /* AirplayInstUITests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		843B60052D31CFA0006FAC92 /* Resources */ = {
+		251AD8B42D4448950082DD5E /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		843B60162D31CFA1006FAC92 /* Resources */ = {
+		251AD8C52D4448960082DD5E /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		843B60202D31CFA1006FAC92 /* Resources */ = {
+		251AD8CF2D4448960082DD5E /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -232,21 +232,21 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		843B60032D31CFA0006FAC92 /* Sources */ = {
+		251AD8B22D4448950082DD5E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		843B60142D31CFA1006FAC92 /* Sources */ = {
+		251AD8C32D4448960082DD5E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		843B601E2D31CFA1006FAC92 /* Sources */ = {
+		251AD8CD2D4448960082DD5E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -256,20 +256,20 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		843B601A2D31CFA1006FAC92 /* PBXTargetDependency */ = {
+		251AD8C92D4448960082DD5E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 843B60062D31CFA0006FAC92 /* airplayinst */;
-			targetProxy = 843B60192D31CFA1006FAC92 /* PBXContainerItemProxy */;
+			target = 251AD8B52D4448950082DD5E /* AirplayInst */;
+			targetProxy = 251AD8C82D4448960082DD5E /* PBXContainerItemProxy */;
 		};
-		843B60242D31CFA1006FAC92 /* PBXTargetDependency */ = {
+		251AD8D32D4448960082DD5E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 843B60062D31CFA0006FAC92 /* airplayinst */;
-			targetProxy = 843B60232D31CFA1006FAC92 /* PBXContainerItemProxy */;
+			target = 251AD8B52D4448950082DD5E /* AirplayInst */;
+			targetProxy = 251AD8D22D4448960082DD5E /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		843B602A2D31CFA1006FAC92 /* Debug */ = {
+		251AD8D92D4448960082DD5E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -322,7 +322,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 15.1;
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -332,7 +332,7 @@
 			};
 			name = Debug;
 		};
-		843B602B2D31CFA1006FAC92 /* Release */ = {
+		251AD8DA2D4448960082DD5E /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -379,7 +379,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 15.1;
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
@@ -387,171 +387,160 @@
 			};
 			name = Release;
 		};
-		843B602D2D31CFA1006FAC92 /* Debug */ = {
+		251AD8DC2D4448960082DD5E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = airplayinst/airplayinst.entitlements;
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
+				CODE_SIGN_ENTITLEMENTS = AirplayInst/AirplayInst.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_ASSET_PATHS = "\"AirplayInst/Preview Content\"";
+				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = airplayinst/Info.plist;
-				"INFOPLIST_FILE[sdk=macosx*]" = "";
-				INFOPLIST_KEY_NSCameraUsageDescription = "";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				INFOPLIST_KEY_NSMainStoryboardFile = Main;
-				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = logan.airplayinst;
+				PRODUCT_BUNDLE_IDENTIFIER = airplayinstruments.AirplayInst;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
-		843B602E2D31CFA1006FAC92 /* Release */ = {
+		251AD8DD2D4448960082DD5E /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = airplayinst/airplayinst.entitlements;
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
+				CODE_SIGN_ENTITLEMENTS = AirplayInst/AirplayInst.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_ASSET_PATHS = "\"AirplayInst/Preview Content\"";
+				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = airplayinst/Info.plist;
-				INFOPLIST_KEY_NSCameraUsageDescription = "";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				INFOPLIST_KEY_NSMainStoryboardFile = Main;
-				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = logan.airplayinst;
+				PRODUCT_BUNDLE_IDENTIFIER = airplayinstruments.AirplayInst;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
-		843B60302D31CFA1006FAC92 /* Debug */ = {
+		251AD8DF2D4448960082DD5E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 15.1;
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = logan.airplayinstTests;
+				PRODUCT_BUNDLE_IDENTIFIER = airplayinstruments.AirplayInstTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/airplayinst.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/airplayinst";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AirplayInst.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/AirplayInst";
 			};
 			name = Debug;
 		};
-		843B60312D31CFA1006FAC92 /* Release */ = {
+		251AD8E02D4448960082DD5E /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 15.1;
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = logan.airplayinstTests;
+				PRODUCT_BUNDLE_IDENTIFIER = airplayinstruments.AirplayInstTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/airplayinst.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/airplayinst";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AirplayInst.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/AirplayInst";
 			};
 			name = Release;
 		};
-		843B60332D31CFA1006FAC92 /* Debug */ = {
+		251AD8E22D4448960082DD5E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = logan.airplayinstUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = airplayinstruments.AirplayInstUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
-				TEST_TARGET_NAME = airplayinst;
+				TEST_TARGET_NAME = AirplayInst;
 			};
 			name = Debug;
 		};
-		843B60342D31CFA1006FAC92 /* Release */ = {
+		251AD8E32D4448960082DD5E /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = logan.airplayinstUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = airplayinstruments.AirplayInstUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
-				TEST_TARGET_NAME = airplayinst;
+				TEST_TARGET_NAME = AirplayInst;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		843B60022D31CFA0006FAC92 /* Build configuration list for PBXProject "airplayinst" */ = {
+		251AD8B12D4448950082DD5E /* Build configuration list for PBXProject "AirplayInst" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				843B602A2D31CFA1006FAC92 /* Debug */,
-				843B602B2D31CFA1006FAC92 /* Release */,
+				251AD8D92D4448960082DD5E /* Debug */,
+				251AD8DA2D4448960082DD5E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		843B602C2D31CFA1006FAC92 /* Build configuration list for PBXNativeTarget "airplayinst" */ = {
+		251AD8DB2D4448960082DD5E /* Build configuration list for PBXNativeTarget "AirplayInst" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				843B602D2D31CFA1006FAC92 /* Debug */,
-				843B602E2D31CFA1006FAC92 /* Release */,
+				251AD8DC2D4448960082DD5E /* Debug */,
+				251AD8DD2D4448960082DD5E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		843B602F2D31CFA1006FAC92 /* Build configuration list for PBXNativeTarget "airplayinstTests" */ = {
+		251AD8DE2D4448960082DD5E /* Build configuration list for PBXNativeTarget "AirplayInstTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				843B60302D31CFA1006FAC92 /* Debug */,
-				843B60312D31CFA1006FAC92 /* Release */,
+				251AD8DF2D4448960082DD5E /* Debug */,
+				251AD8E02D4448960082DD5E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		843B60322D31CFA1006FAC92 /* Build configuration list for PBXNativeTarget "airplayinstUITests" */ = {
+		251AD8E12D4448960082DD5E /* Build configuration list for PBXNativeTarget "AirplayInstUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				843B60332D31CFA1006FAC92 /* Debug */,
-				843B60342D31CFA1006FAC92 /* Release */,
+				251AD8E22D4448960082DD5E /* Debug */,
+				251AD8E32D4448960082DD5E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = 843B5FFF2D31CFA0006FAC92 /* Project object */;
+	rootObject = 251AD8AE2D4448950082DD5E /* Project object */;
 }
