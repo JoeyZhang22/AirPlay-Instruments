@@ -4,7 +4,7 @@ def generate_chord_matrix():
     # Base chord list
     chord_list = ["Gb", "Db", "Ab", "Eb", "Bb", "F", "C", "G", "D", "A", "E", "B", "F#", "C#", "G#", "D#", "A#"]
 
-    # Initial dictionary for gesture-to-chord mappings
+    # Initial empty dictionary for gesture-to-chord mappings
     gesture_to_chord = {
         "Closed_Fist": None, 
         "Open_Palm": None,
@@ -16,6 +16,7 @@ def generate_chord_matrix():
         "None": None
     }
 
+    # Chords with associated MIDI suffixes
     chord_types = {
         "Major": "",
         "Minor": "m",
@@ -56,52 +57,71 @@ def generate_chord_matrix():
         "Power": "5"
     }
 
-    def input_chord_types(section_name, options):
-        print(f"Available chord types: {', '.join(options)}")
+    # Default gesture-to-chord mapping
+    default_gesture_to_chord = {
+        "Closed_Fist": "C", 
+        "Open_Palm": "D",
+        "Pointing_Up": "E",
+        "Thumb_Down": "F",
+        "Thumb_Up": "G",
+        "Victory": "A",
+        "ILoveYou": "B",
+        "None": None
+    }
+
+    # Default chord types for Top, Middle, and Bottom sections
+    default_chord_types = ["Major", "Minor", "Dominant7"]
+
+    # Function to get user selected chord types
+    def get_chord_types():
+        print("\nWould you like to use the default chord types? (yes/no)")
+        choice = input().strip().lower()
+
+        if choice == "yes":
+            return default_chord_types
+
+        print("\nAvailable chord types:", ", ".join(chord_types.keys()))
         
+        selected_chord_types = []
+
+        for i, section in enumerate(["Top", "Middle", "Bottom"]):
+            while True:
+                choice = input(f"Choose a chord type for the {section} section: ").strip()
+                if choice in chord_types:
+                    selected_chord_types.append(choice)
+                    break
+                else:
+                    print("Invalid choice. Please type the name of a chord from the list.")
+        return selected_chord_types
+    
+    def get_gesture_mapping():
+        available_gestures = list(gesture_to_chord.keys()) 
+
+        print("\nWould you like to use the default gesture-to-chord mapping? (yes/no)")
+        choice = input().strip().lower()
+
+        if choice == "yes":
+            return default_gesture_to_chord
+        
+        custom_mapping = {}
+
         while True:
-            choice = input(f"Enter your choice for the {section_name} section: ").strip()
-            if choice in options:
-                print(f"You selected '{choice}' for the {section_name} section.")
-                return choice
-            else:
-                print("Invalid choice. Please type the name of a chord from the list.")
+            print("\nAvailable gestures:", ", ".join(available_gestures))
+            gesture = input("Enter a gesture name (or type 'done' to finish): ").strip()
+            
+            if gesture.lower() == "done":
+                break
+            if gesture not in available_gestures:
+                print("Invalid gesture. Please choose from the available gestures.")
+                continue
 
-    selected_chord_types = [] # Section selections
+            chord = input(f"Enter the chord for {gesture}: ").strip()
+            custom_mapping[gesture] = chord
 
-    sections = ["Top", "Middle", "Bottom"]
-    for section in sections:
-        chord_type = input_chord_types(section, chord_types.keys())
-        selected_chord_types.append(chord_type)
+        return custom_mapping if custom_mapping else default_gesture_to_chord
 
-    # Function to display the current gesture-to-chord mappings
-    def display_mappings(gesture_to_chord):
-        print("\nCurrent Gesture-to-Chord Mappings:")
-        for gesture, chord in gesture_to_chord.items():
-            print(f"{gesture}: {chord if chord else 'None'}")
-
-    while True:
-        print("Available gestures: ")
-        for gesture in gesture_to_chord:
-            print(f"{gesture}")
-
-        gesture = input("\nEnter the gesture you'd like to map (e.g., 'Closed_Fist', 'Open_Palm'): ")
-
-        if gesture in gesture_to_chord:
-            chord = input(f"Enter the chord you'd like to map to {gesture}: ")
-            if chord in chord_list:
-                gesture_to_chord[gesture] = chord
-                print(f"Mapped {chord} to {gesture}.")
-            else:
-                print(f"Chord '{chord}' not found. Please choose a valid chord note.")
-        else:
-            print(f"Gesture '{gesture}' not found. Please choose a valid gesture from the list.")
-        
-        display_mappings(gesture_to_chord)
-
-        continue_mapping = input("\nWould you like to map another gesture? (yes/no): ").lower()
-        if continue_mapping != 'yes':
-            break
+    gesture_to_chord = get_gesture_mapping()
+    selected_chord_types = get_chord_types()
 
     chord_matrix = {chord_type: {} for chord_type in selected_chord_types}
 
@@ -110,20 +130,11 @@ def generate_chord_matrix():
             suffix = chord_types[chord_type]
             chord_matrix[chord_type][gesture] = (chord + suffix) if chord else None
 
-    print("Final Chord Matrix:")
+    print("\nFinal Chord Matrix:")
     for section, mapping in chord_matrix.items():
-        print(f"{section}: {mapping}")
-    
+        filtered_mapping = {gesture: chord for gesture, chord in mapping.items() if chord is not None}
+        print(f"{section}: {filtered_mapping}")
+
     return chord_matrix
 
 chordMatrix = generate_chord_matrix()
-
-# Takes in chord matrix and lists all chords
-def chords_list(chord_matrix):
-    all_chords = set()
-    for mappings in chord_matrix.values():
-        all_chords.update(chord for chord in mappings.values() if chord is not None)
-    return list(all_chords)
-
-chord_list = chords_list(chordMatrix)
-print(chord_list)
