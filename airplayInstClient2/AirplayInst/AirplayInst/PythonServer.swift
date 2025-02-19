@@ -14,8 +14,7 @@ class PythonServer: ObservableObject {
 
     func start() {
         // Define the absolute path of the Python script
-        let scriptPath = "/Users/joeyzhang/Documents/git/school/AirPlay-Instruments/airplayInstClient2/AirplayInst/AirplayInst/PythonServer/main.py"
-        
+        let scriptPath = "/Users/joeyzhang/Documents/git/school/AirPlay-Instruments/airplayInstClient2/AirplayInst/AirplayInst/PythonBackEnd/main.py"
         // Ensure the correct Python interpreter path
         let pythonPath = "/usr/bin/python3" // Adjust if necessary
 
