@@ -22,11 +22,17 @@ host_name = socket.gethostname()
 host_ip = socket.gethostbyname(host_name)
 port = 60003
 socket_address = (host_ip, port)
-server_socket.bind(socket_address)
-server_socket.listen(5)
-print(f"Listening at {socket_address}")
-client_socket, addr = server_socket.accept()
-print(f"Connection from: {addr}")
+socket_address = (host_ip, port)
+try:
+    server_socket.bind(socket_address)
+    server_socket.listen(5)
+    print(f"Listening at {socket_address}")
+    client_socket, addr = server_socket.accept()
+    print(f"Connection from: {addr}")
+except socket.error as e:
+    print(f"Error binding or accepting connection: {e}")
+    sys.exit(1)
+
 
 
 # update FPS on display

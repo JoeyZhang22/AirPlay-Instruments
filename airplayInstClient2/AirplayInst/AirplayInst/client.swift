@@ -4,6 +4,7 @@ import AppKit
 
 class FrameReceiver: ObservableObject {
     private var connection: NWConnection?
+    private var receivedData = Data() // Data buffer for accumulating received bytes
     @Published var image: NSImage? // Published property to update the UI
 
     func start(host: String, port: Int) {
@@ -16,7 +17,7 @@ class FrameReceiver: ObservableObject {
             switch state {
             case .ready:
                 print("Connected to server at \(host):\(port)")
-                self.receiveFrameSize()
+                self.receiveFrameSize() // Start receiving frame size
             case .failed(let error):
                 print("Connection failed with error: \(error)")
             default:
@@ -59,21 +60,29 @@ class FrameReceiver: ObservableObject {
     }
 
     private func receiveFrameData(remainingBytes: Int) {
-        // Receive the frame data
+        // Receive the frame data in chunks and accumulate
         connection?.receive(minimumIncompleteLength: remainingBytes, maximumLength: remainingBytes) { (data, context, isComplete, error) in
-            if let data = data, data.count == remainingBytes {
-                // Decode the JPEG data into an NSImage
-                if let image = NSImage(data: data) {
-                    // Update the image on the main thread
-                    DispatchQueue.main.async {
-                        self.image = image
-                    }
-                } else {
-                    print("Failed to decode frame")
-                }
+            if let data = data {
+                self.receivedData.append(data)
 
-                // Continue receiving the next frame size
-                self.receiveFrameSize()
+                // If the accumulated data matches the expected size, decode it
+                if self.receivedData.count == remainingBytes {
+                    // Decode the JPEG data into an NSImage
+                    if let image = NSImage(data: self.receivedData) {
+                        // Update the image on the main thread
+                        DispatchQueue.main.async {
+                            self.image = image
+                        }
+                    } else {
+                        print("Failed to decode frame")
+                    }
+
+                    // Clear the received data buffer for the next frame
+                    self.receivedData.removeAll()
+
+                    // Continue receiving the next frame size
+                    self.receiveFrameSize()
+                }
             } else if let error = error {
                 print("Error receiving frame data: \(error)")
             }

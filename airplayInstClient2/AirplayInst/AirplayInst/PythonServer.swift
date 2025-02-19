@@ -12,20 +12,19 @@ class PythonServer: ObservableObject {
     private var process: Process?
     @Published var isRunning: Bool = false // Published property to track server state
 
-    func start(host: String, port: Int) {
-        // Get the absolute path of the Python script
-        guard let scriptPath = Bundle.main.path(forResource: "graphics_server", ofType: "py") else {
-            print("Python script not found in bundle")
-            return
-        }
-
+    func start() {
+        // Define the absolute path of the Python script
+        let scriptPath = "/Users/joeyzhang/Documents/git/school/AirPlay-Instruments/airplayInstClient2/AirplayInst/AirplayInst/PythonServer/main.py"
+        
         // Ensure the correct Python interpreter path
-        let pythonPath = "/usr/bin/python3" // Change if needed
+        let pythonPath = "/usr/bin/python3" // Adjust if necessary
 
         // Create the Process instance
         process = Process()
-        process?.launchPath = pythonPath // Use `launchPath` instead of `executableURL`
-        process?.arguments = ["-u", scriptPath, "--host", host, "--port", "\(port)"] // `-u` for unbuffered output
+        process?.launchPath = pythonPath // Use `launchPath` for executing the Python interpreter
+        
+        // Set arguments for the Python script (no arguments if not needed)
+        process?.arguments = ["-u", scriptPath] // `-u` for unbuffered output
 
         // Set the script’s directory as the working directory (important for relative paths)
         let scriptDirectory = (scriptPath as NSString).deletingLastPathComponent
@@ -54,8 +53,8 @@ class PythonServer: ObservableObject {
         }
     }
 
-
     func stop() {
+        // Stop the server process
         process?.terminate()
         process = nil
         isRunning = false // Update the server state
