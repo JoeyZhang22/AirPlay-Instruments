@@ -1,28 +1,16 @@
-//
-//  client.swift
-//  AirplayInst
-//
-//  Created by Joey Zhang on 2025-01-24.
-//
-
 import Foundation
 import Network
 import AppKit
-import SwiftUI
 
 class FrameReceiver: ObservableObject {
     private var connection: NWConnection?
     @Published var image: NSImage? // Published property to update the UI
 
     func start(host: String, port: Int) {
-        // Connect to the server
-        connectToServer(host: host, port: port)
-    }
-
-    private func connectToServer(host: String, port: Int) {
-        let host = NWEndpoint.Host("localhost")
-        let port = NWEndpoint.Port(integerLiteral: 60003)
-        connection = NWConnection(host: host, port: port, using: .tcp)
+        // Create a connection to the server
+        let nwHost = NWEndpoint.Host(host)
+        let nwPort = NWEndpoint.Port(integerLiteral: UInt16(port))
+        connection = NWConnection(host: nwHost, port: nwPort, using: .tcp)
 
         connection?.stateUpdateHandler = { state in
             switch state {
@@ -37,6 +25,21 @@ class FrameReceiver: ObservableObject {
         }
 
         connection?.start(queue: .global())
+    }
+
+    func startClient(host: String, port: Int) {
+        // Establish the client connection if not already connected
+        if connection == nil {
+            start(host: host, port: port)
+        } else {
+            print("Client already connected.")
+        }
+    }
+
+    func stop() {
+        connection?.cancel() // Cancel the connection
+        connection = nil
+        print("Frame receiver stopped")
     }
 
     private func receiveFrameSize() {
