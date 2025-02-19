@@ -59,10 +59,27 @@ def populate_chord_names(names):
     names.append("Minor")
     names.append("Special")
 
+def populate_percersive_names(corner_names, top_circle_names, bottom_circle_names):
+    # Top Corners
+    corner_names.append("Crash")
+    corner_names.append("Ride")
 
-def define_areas(handedness):
+    # Bottom Corners
+    corner_names.append("High-Hat")
+    corner_names.append("Low Tom")
+
+    # Top Circles
+    top_circle_names.append("High Tom")
+    top_circle_names.append("Mid Tom")
+
+    # Bottom Circles
+    bottom_circle_names.append("Snare")
+    bottom_circle_names.append("Bass")
+
+
+def define_areas(handedness, instrument_type):
     """
-    For now, the screen is divided to 6 parts:
+    For now, the screen is divided to 6 parts by default:
       Top-left:     Strum up
       Mid-left:     Neutral
       Bottom-left:  Strum down
@@ -71,33 +88,85 @@ def define_areas(handedness):
       Mid-right:     Minor
       Bottom-right:  Special
     """
-    # define area names based on handedness, the prefered hand will be used for strum area
-    left_areas = []
-    right_areas = []
-    if handedness == "left":
-        populate_strum_names(left_areas)
-        populate_chord_names(right_areas)
-    else:
-        populate_strum_names(right_areas)
-        populate_chord_names(left_areas)
-
-    # initialize areas, for dimension we use normalized values to match results from the recognizer
     areas = []
-    left_stride = 1 / len(left_areas)
-    for i in range(len(left_areas)):
-        areas.append(
-            division_area(
-                left_areas[i], 0, 0 + left_stride * i, 0.5, left_stride * (i + 1)
-            )
-        )
 
-    right_stride = 1 / len(right_areas)
-    for i in range(len(right_areas)):
-        areas.append(
-            division_area(
-                right_areas[i], 0.5, 0 + right_stride * i, 1, right_stride * (i + 1)
+    if instrument_type is "Expressive":
+        # define area names based on handedness, the prefered hand will be used for strum area
+        left_areas = []
+        right_areas = []
+
+        if handedness == "left":
+            populate_strum_names(left_areas)
+            populate_chord_names(right_areas)
+        else:
+            populate_strum_names(right_areas)
+            populate_chord_names(left_areas)
+
+        # initialize expressive areas, for dimension we use normalized values to match results from the recognizer
+        left_stride = 1 / len(left_areas)
+        for i in range(len(left_areas)):
+            areas.append(
+                division_area(
+                    left_areas[i], "Rectangle", 0, 0 + left_stride * i, 0.5, left_stride * (i + 1)
+                )
             )
-        )
+
+        right_stride = 1 / len(right_areas)
+        for i in range(len(right_areas)):
+            areas.append(
+                division_area(
+                    right_areas[i], "Rectangle", 0.5, 0 + right_stride * i, 1, right_stride * (i + 1)
+                )
+            )
+    else:
+        # define area names for percussion areas
+        corner_areas = []
+        top_circle_areas = []
+        bottom_circle_areas = []
+
+        populate_percersive_names(corner_areas, top_circle_areas, bottom_circle_areas)
+
+        # initialize percussion areas, for dimension we use normalized values to match results from the recognizer
+        stride = 1 / (len(top_circle_areas) + 2)
+
+        # define corner areas
+        areas.append(
+                division_area(
+                    corner_areas[0], "Corner", radius = stride, center=(0, 0)
+                )
+            )
+        areas.append(
+                division_area(
+                    corner_areas[1], "Corner", radius = stride, center=(1, 0)
+                )
+            )
+        
+        areas.append(
+                division_area(
+                    corner_areas[2], "Corner", radius = stride, center=(0, 1)
+                )
+            )
+        areas.append(
+                division_area(
+                    corner_areas[3], "Corner", radius = stride, center=(1, 1)
+                )
+            )
+     
+        # define circle areas
+        circle_ratio = 0.5
+        for i in range(len(top_circle_areas)):
+            areas.append(
+                division_area(
+                    top_circle_areas[i], "Circle", radius = stride*circle_ratio, center=((i+1.5) * stride, stride*circle_ratio)
+                )
+            )
+
+        for i in range(len(bottom_circle_areas)):
+            areas.append(
+                division_area(
+                    bottom_circle_areas[i], "Circle", radius = stride*circle_ratio, center=((i+1.5) * stride, 1 - stride*circle_ratio)
+                )
+            )
 
     return areas
 
@@ -115,6 +184,7 @@ def run_graphic(
     result_queue,
     result_event,
     handedness,
+    instrument_type,
 ) -> None:
     """Continuously run inference on images acquired from the camera.
 
@@ -147,7 +217,7 @@ def run_graphic(
     )
 
     # Define areas
-    areas = define_areas(handedness)
+    areas = define_areas(handedness, instrument_type)
 
     # Continuously capture images from the camera and run inference
     while camera.isOpened():
@@ -172,7 +242,7 @@ def run_graphic(
 
         # Show the FPS
         current_frame = image
-        opencv_utils.draw_fps(current_frame, FPS)
+        #opencv_utils.draw_fps(current_frame, FPS)
 
         # Draw the divison lines
         opencv_utils.draw_division_lines(current_frame, areas)
