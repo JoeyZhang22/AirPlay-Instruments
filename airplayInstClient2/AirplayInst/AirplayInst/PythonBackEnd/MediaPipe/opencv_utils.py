@@ -145,7 +145,7 @@ def draw_division_lines(current_frame, areas):
     frame_height, frame_width = current_frame.shape[:2]
 
     # Draw the mid line
-    if areas[0].type is "Rectangle":
+    if areas[0].type == "None":
         draw_dashed_line(
             current_frame,
             (frame_width // 2, 0),
@@ -157,15 +157,23 @@ def draw_division_lines(current_frame, areas):
     # Draw Labels for each area
     area_label_color = (88, 233, 88)  # light green
     for area in areas:
-        if area.type is "Rectangle":
+        if area.type == "Rectangle":
             x_min = int(area.x_min * frame_width)
             x_max = int(area.x_max * frame_width)
             y_min = int(area.y_min * frame_height)
             y_max = int(area.y_max * frame_height)
 
-            draw_dashed_line(current_frame, (x_min, y_max), (x_max, y_max), line_color, line_thickness)
+            if y_min != 0:
+                draw_dashed_line(current_frame, (x_min, y_min), (x_max, y_min), line_color, line_thickness)
+
+            if y_max != 1:
+                draw_dashed_line(current_frame, (x_min, y_max), (x_max, y_max), line_color, line_thickness)
+
+            if x_max != 1:
+                draw_dashed_line(current_frame, (x_max, y_min), (x_max, y_max), line_color, line_thickness)
+            
             draw_text(current_frame, (x_min + 2, y_max - 5), area.name, area_label_color, 0.5)
-        elif area.type is "Circle" or area.type is "Corner":
+        elif area.type == "Circle" or area.type == "Corner":
             normalized_x, normalized_y = area.center
             center_x = int(normalized_x * frame_width)
             center_y = int(normalized_y * frame_height)
@@ -185,7 +193,7 @@ def draw_division_lines(current_frame, areas):
             )[0]
             text_width, text_height = text_size
 
-            if area.type is "Circle":
+            if area.type == "Circle":
                 draw_text(current_frame, (center_x, center_y + text_offset_y*(radius_y + text_height)), area.name, area_label_color, 0.5)
             else:
                 draw_text(current_frame, (center_x + text_offset_x*(text_width), center_y + text_offset_y*(radius_y + text_height)), area.name, area_label_color, 0.5)

@@ -174,7 +174,7 @@ class Area:
     def is_within(self, hand_landmarks):
         counter = 0
 
-        if self.type is "Rectangle":
+        if self.type == "Rectangle":
             for landmark in hand_landmarks:
                 if (
                     landmark.x > self.x_min
