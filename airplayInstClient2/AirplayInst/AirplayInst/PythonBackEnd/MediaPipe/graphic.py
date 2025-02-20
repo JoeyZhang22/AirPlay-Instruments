@@ -19,7 +19,7 @@ FPS_REFREASH_COUNT = 10
 # Create a socket object
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 host_name = socket.gethostname()
-host_ip = socket.gethostbyname(host_name)
+host_ip = '127.0.0.1'
 port = 60003
 socket_address = (host_ip, port)
 server_socket.bind(socket_address)
@@ -56,21 +56,20 @@ def populate_chord_names(names):
 
 def populate_percersive_names(corner_names, top_circle_names, bottom_circle_names):
     # Top Corners
-    corner_names.append("Crash")
-    corner_names.append("Ride")
+    corner_names.append("Crash Right")
+    corner_names.append("Ride Bell")
 
     # Bottom Corners
-    corner_names.append("High-Hat")
-    corner_names.append("Low Tom")
+    corner_names.append("Hi-Hat Open")
+    corner_names.append("Tom Low")
 
     # Top Circles
-    top_circle_names.append("High Tom")
-    top_circle_names.append("Mid Tom")
+    top_circle_names.append("Tom Mid High")
+    top_circle_names.append("Tom High")
 
     # Bottom Circles
-    bottom_circle_names.append("Snare")
-    bottom_circle_names.append("Bass")
-
+    bottom_circle_names.append("Snare Center")
+    bottom_circle_names.append("Kick")
 
 def define_areas(handedness, instrument_type):
     """
