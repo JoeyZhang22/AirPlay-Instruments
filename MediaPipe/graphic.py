@@ -115,12 +115,24 @@ def define_areas(handedness, instrument_type, name_list):
 
         populate_percersive_names_rect(top_areas, bottom_areas)
 
+        # Percusiion area parameters
+        percussion_area_type = "Rectangle"
+        box_height = 0.25
+        top_areas_initial_height = 0.25
+        bottom_areas_initial_height = 1 - box_height
+
         # initialize expressive areas, for dimension we use normalized values to match results from the recognizer
         top_stride = 1 / len(top_areas)
         for i in range(len(top_areas)):
             areas.append(
                 division_area(
-                    top_areas[i], "Rectangle", top_stride * i, 0, top_stride * (i + 1), 0.3
+                    top_areas[i],
+                    percussion_area_type,
+                    top_stride * i,
+                    top_areas_initial_height,
+                    top_stride * (i + 1), 
+                    top_areas_initial_height + box_height,
+                    instrument_type=instrument_type
                 )
             )
 
@@ -128,7 +140,13 @@ def define_areas(handedness, instrument_type, name_list):
         for i in range(len(bottom_areas)):
             areas.append(
                 division_area(
-                    bottom_areas[i], "Rectangle", top_stride * i, 0.7, top_stride * (i + 1), 1
+                    bottom_areas[i], 
+                    percussion_area_type, 
+                    bottom_stride * i, 
+                    bottom_areas_initial_height, 
+                    bottom_stride * (i + 1), 
+                    bottom_areas_initial_height + box_height,
+                    instrument_type=instrument_type
                 )
             )
 
