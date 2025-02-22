@@ -88,10 +88,8 @@ class Recognizer:
         }
         """
 
-        recognition_results = copy.deepcopy(self.recognition_result_list)
-
         transformed_results = []
-        for recognition_result in recognition_results:
+        for recognition_result in self.recognition_result_list:
             transformed_outputs = []
             # Transform the results for decision box
             for hand_index, hand_landmarks in enumerate(

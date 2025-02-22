@@ -225,7 +225,7 @@ def run_graphic(
 
         # Show the FPS
         current_frame = image
-        #opencv_utils.draw_fps(current_frame, FPS)
+        opencv_utils.draw_fps(current_frame, FPS)
 
         # Draw the divison lines
         opencv_utils.draw_division_lines(current_frame, areas)
