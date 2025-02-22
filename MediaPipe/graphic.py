@@ -10,7 +10,7 @@ division_area = mediapipe_utils.Area
 # Global variables to calculate FPS
 COUNTER, FPS = 0, 0
 START_TIME = time.time()
-FPS_REFREASH_COUNT = 10
+FPS_REFREASH_COUNT = 15
 
 
 # update FPS on display
@@ -23,6 +23,8 @@ def update_fps():
         FPS = FPS_REFREASH_COUNT / (time.time() - START_TIME)
         START_TIME = time.time()
 
+def increment_fps():
+    global COUNTER
     COUNTER += 1
 
 
@@ -233,6 +235,8 @@ def run_graphic(
         for recognition_result in recognition_result_list:
             if not recognition_result:
                 continue
+
+            increment_fps()
             update_fps()
             opencv_utils.draw_gesture_labels(recognition_result, current_frame)
 
