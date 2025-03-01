@@ -12,7 +12,6 @@ COUNTER, FPS = 0, 0
 START_TIME = time.time()
 FPS_REFREASH_COUNT = 15
 
-
 # update FPS on display
 def update_fps():
     global FPS, COUNTER, START_TIME, FPS_REFREASH_COUNT
@@ -258,8 +257,13 @@ def run_graphic(
             cv2.imshow("gesture_recognition", resized_frame)
 
         # Stop the program if the ESC key is pressed.
-        if cv2.waitKey(1) == 27:
+        key = cv2.waitKey(1)
+        if key == 27:
             break
+        elif key == ord('q')
+            self.instrument_type = 'Chord' if self.instrument_type == 'Percussion' else self.instrument_type = 'Chord'
+            # Update areas to match new areas
+            areas = define_areas(handedness, instrument_type, chord_list)
 
     # Destruction upon exit
     recognizer.close()
