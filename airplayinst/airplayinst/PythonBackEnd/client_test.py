@@ -54,7 +54,7 @@ if __name__ == "__main__":
     # Parse command-line arguments
     parser = argparse.ArgumentParser(description="Python client to receive OpenCV frames from a server.")
     parser.add_argument("--host", type=str, default="localhost", help="Server host (default: localhost)")
-    parser.add_argument("--port", type=int, default=60004, help="Server port (default: 60003)")
+    parser.add_argument("--port", type=int, default=60003, help="Server port (default: 60003)")
     args = parser.parse_args()
 
     # Start receiving frames

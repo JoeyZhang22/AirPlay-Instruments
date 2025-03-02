@@ -1,6 +1,6 @@
 from enum import Enum
 from MIDI.chord_player import *
-from gesture_matrix import generate_mappings
+from DataProcessing.gesture_matrix import generate_mappings
 
 
 # Maintain instrument states
