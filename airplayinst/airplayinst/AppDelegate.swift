@@ -17,7 +17,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                           styleMask: [.titled, .closable, .resizable],
                           backing: .buffered, defer: false)
         window.center()
-        window.title = "Multi-Page App"
+        window.title = "Airplay Instruments"
         window.makeKeyAndOrderFront(nil)
 
         // Set the initial view controller

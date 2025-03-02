@@ -1,128 +1,91 @@
 import Foundation
-import AppKit
 import Network
+import AppKit
 
-class SocketClient {
+class FrameReceiver: ObservableObject {
     private var connection: NWConnection?
-    private var imageView: NSImageView! // Image view to display frames
+    private var receivedData = Data() // Data buffer for accumulating received bytes
+    @Published var image: NSImage? // Published property to update the UI
 
-    func start() {
-        // Create an image view to display frames
-        imageView = NSImageView(frame: CGRect(x: 0, y: 0, width: 640, height: 480))
-        imageView.imageScaling = .scaleProportionallyUpOrDown
-
-        // Create a window to display the image view
-        let window = NSWindow(
-            contentRect: imageView.frame,
-            styleMask: [.titled, .closable, .resizable],
-            backing: .buffered,
-            defer: false
-        )
-        window.contentView = imageView
-        window.makeKeyAndOrderFront(nil)
-
-        // Start the Python server
-        startPythonServer()
-
-        // Wait for the server to start (adjust delay as needed)
-        Thread.sleep(forTimeInterval: 2)
-
-        // Connect to the Python server
-        connectToServer()
-    }
-
-    private func startPythonServer() {
-        print("Starting Python server")
-        // Get the path to the Python script in the app bundle
-        guard let scriptPath = Bundle.main.path(forResource: "graphics_server", ofType: "py") else {
-            print("Python script not found in bundle")
-            return
-        }
-
-        // Create a Process instance
-        let process = Process()
-
-        // Set the executable to the Python interpreter
-        process.executableURL = URL(fileURLWithPath: "/usr/bin/python3")
-
-        // Set the arguments (path to the script)
-        process.arguments = [scriptPath]
-
-        // Set up output handling (optional)
-        let outputPipe = Pipe()
-        process.standardOutput = outputPipe
-        process.standardError = outputPipe
-
-        // Handle output data (optional)
-        outputPipe.fileHandleForReading.readabilityHandler = { fileHandle in
-            let data = fileHandle.availableData
-            if let output = String(data: data, encoding: .utf8) {
-                print("Python Server Output: \(output)")
-            }
-        }
-
-        // Launch the process
-        do {
-            try process.run()
-            print("Python server started successfully")
-        } catch {
-            print("Failed to start Python server: \(error)")
-        }
-    }
-
-    private func connectToServer() {
+    func start(host: String, port: Int) {
         // Create a connection to the server
-        let host = NWEndpoint.Host("localhost")
-        let port = NWEndpoint.Port(integerLiteral: 60003)
-        connection = NWConnection(host: host, port: port, using: .tcp)
+        let nwHost = NWEndpoint.Host(host)
+        let nwPort   = NWEndpoint.Port(integerLiteral: UInt16(port))
+        connection = NWConnection(host: nwHost, port: nwPort, using: .tcp)
 
         connection?.stateUpdateHandler = { state in
             switch state {
             case .ready:
-                print("Connected to server")
-                self.receiveFrame()
+                print("Connected to server at \(host):\(port)")
+                self.receiveFrameSize() // Start receiving frame size
             case .failed(let error):
                 print("Connection failed with error: \(error)")
             default:
-                break
+                print("Connection state: \(state)")
             }
         }
 
         connection?.start(queue: .global())
     }
 
-    private func receiveFrame() {
+    func startClient(host: String, port: Int) {
+        // Establish the client connection if not already connected
+        if connection == nil {
+            start(host: host, port: port)
+        } else {
+            print("Client already connected.")
+        }
+    }
+
+    func stop() {
+        connection?.cancel() // Cancel the connection
+        connection = nil
+        print("Frame receiver stopped")
+    }
+
+    private func receiveFrameSize() {
+        // Receive the size of the incoming frame (8 bytes)
         connection?.receive(minimumIncompleteLength: 8, maximumLength: 8) { (data, context, isComplete, error) in
             if let data = data, data.count == 8 {
-                // Unpack the message size
+                // Unpack the message size (UInt64)
                 let messageSize = data.withUnsafeBytes { $0.load(as: UInt64.self) }
+                print("Receiving frame of size: \(messageSize)")
 
-                // Receive the compressed frame data
-                self.connection?.receive(minimumIncompleteLength: Int(messageSize), maximumLength: Int(messageSize)) { (frameData, context, isComplete, error) in
-                    if let frameData = frameData {
-                        // Decode the JPEG data into an image
-                        if let image = NSImage(data: frameData) {
-                            // Update the image view on the main thread
-                            DispatchQueue.main.async {
-                                self.imageView.image = image
-                            }
-                        }
-                    }
-
-                    // Continue receiving frames
-                    self.receiveFrame()
-                }
+                // Receive the frame data
+                self.receiveFrameData(remainingBytes: Int(messageSize))
+            } else if let error = error {
+                print("Error receiving frame size: \(error)")
             }
         }
     }
-}
 
-// Start the client
-func startClient() {
-    // Start the client
-    let client = SocketClient()
-    client.start()
+    private func receiveFrameData(remainingBytes: Int) {
+        // Receive the frame data in chunks and accumulate
+        connection?.receive(minimumIncompleteLength: remainingBytes, maximumLength: remainingBytes) { (data, context, isComplete, error) in
+            if let data = data {
+                self.receivedData.append(data)
 
-    // Keep the application running
-    RunLoop.main.run()
+                // If the accumulated data matches the expected size, decode it
+                if self.receivedData.count == remainingBytes {
+                    // Decode the JPEG data into an NSImage
+                    if let image = NSImage(data: self.receivedData) {
+                        // Update the image on the main thread
+                        DispatchQueue.main.async {
+                            self.image = image
+                        }
+                    } else {
+                        print("Failed to decode frame")
+                    }
+
+                    // Clear the received data buffer for the next frame
+                    self.receivedData.removeAll()
+
+                    // Continue receiving the next frame size
+                    self.receiveFrameSize()
+                }
+            } else if let error = error {
+                print("Error receiving frame data: \(error)")
+            }
+        }
+    }
 }

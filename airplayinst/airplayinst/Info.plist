@@ -2,7 +2,16 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NSCameraReactionEffectGesturesEnabledDefault</key>
-	<false/>
+    <key>NSCameraUsageDescription</key>
+    <string>This app requires access to the camera to capture video.</string>
+    
+    <key>NSMicrophoneUsageDescription</key>
+    <string>This app requires access to the microphone for audio input.</string>
+    
+    <key>NSAppTransportSecurity</key>
+    <dict>
+        <key>NSAllowsArbitraryLoads</key>
+        <true/>
+    </dict>
 </dict>
 </plist>
