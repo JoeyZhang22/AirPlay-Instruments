@@ -1,5 +1,6 @@
 from enum import Enum
 from MIDI.chord_player import *
+from gesture_matrix import generate_mappings
 
 
 # Maintain instrument states
@@ -28,20 +29,29 @@ decisionMatrix = [
     [actions.STOP, actions.PLAY, actions.NULL],
 ]
 
-# The ChordMatrix is currently hard-coded. In the future, it can be read from a file or generated dynamically based on user input.
-"""ChordMatrix[Area][Gesture] accesses the chord index to be played."""
-chordMatrix = {
-    "Major": {"Open_Palm": 0, "Closed_Fist": 1},
-    "Minor": {"Open_Palm": 2, "Closed_Fist": 3},
-    "Special": {"Open_Palm": 0, "Closed_Fist": 1},
-}
+# # The ChordMatrix is currently hard-coded. In the future, it can be read from a file or generated dynamically based on user input.
+# """ChordMatrix[Area][Gesture] accesses the chord index to be played."""
+# chordMatrix = {
+#     "Major": {"Open_Palm": 0, "Closed_Fist": 1},
+#     "Minor": {"Open_Palm": 2, "Closed_Fist": 3},
+#     "Special": {"Open_Palm": 0, "Closed_Fist": 1},
+# }
+chordMatrix = generate_mappings()
 
+def chords_list(chord_matrix):
+    all_chords = set()
+    for mappings in chord_matrix.values():
+        all_chords.update(chord for chord in mappings.values() if chord is not None)
+    return list(all_chords)
+
+chord_list = chords_list(chordMatrix)
+print(chord_list)
 
 class chordDecisionBlock:
     def __init__(self, output_port="Logic Pro Virtual In"):
         # Initialize MIDI output port, default is Logic Pro Virtual In
         self.output_port = mido.open_output(output_port)
-        self.chord_list = ["C", "F", "G", "G7"]
+        self.chord_list = chord_list
         self.midi_chord_list = convert_chord_to_midi_chord(self.chord_list)
         self.state = instrumentState.NEUTRAL
         self.prev_chord_index = -1  # Initialized to -1 to indicate no previous chord
