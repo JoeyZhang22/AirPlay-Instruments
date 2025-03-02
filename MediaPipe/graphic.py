@@ -10,26 +10,31 @@ import MediaPipe.opencv_utils as opencv_utils
 
 division_area = mediapipe_utils.Area
 
+# TESTER
+TEST_ENABLED = True
+
 # Global variables to calculate FPS
 COUNTER, FPS = 0, 0
 START_TIME = time.time()
 FPS_REFREASH_COUNT = 15
+
 # Create a socket object
-server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-host_name = socket.gethostname()
-host_ip = socket.gethostbyname(host_name)
-port = 60003
-socket_address = (host_ip, port)
-socket_address = (host_ip, port)
-try:
-    server_socket.bind(socket_address)
-    server_socket.listen(5)
-    print(f"Listening at {socket_address}")
-    client_socket, addr = server_socket.accept()
-    print(f"Connection from: {addr}")
-except socket.error as e:
-    print(f"Error binding or accepting connection: {e}")
-    sys.exit(1)
+if TEST_ENABLED != True:
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    host_name = socket.gethostname()
+    host_ip = socket.gethostbyname(host_name)
+    port = 60003
+    socket_address = (host_ip, port)
+    socket_address = (host_ip, port)
+    try:
+        server_socket.bind(socket_address)
+        server_socket.listen(5)
+        print(f"Listening at {socket_address}")
+        client_socket, addr = server_socket.accept()
+        print(f"Connection from: {addr}")
+    except socket.error as e:
+        print(f"Error binding or accepting connection: {e}")
+        sys.exit(1)
 
 # update FPS on display
 def update_fps():
@@ -274,22 +279,25 @@ def run_graphic(
             # Standarize resolution
             current_resolution = (1440, 900)
             resized_frame = cv2.resize(recognition_frame, current_resolution)
-            # cv2.imshow("gesture_recognition", resized_frame)
-            # Compress the frame into JPEG format (adjust quality as needed)
-            encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 90]  # Quality from 0 to 100
-            _, buffer = cv2.imencode('.jpg', resized_frame, encode_param)
+            if TEST_ENABLED:
+                cv2.imshow("gesture_recognition", resized_frame)
+            else:
+                # Compress the frame into JPEG format (adjust quality as needed)
+                encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 90]  # Quality from 0 to 100
+                _, buffer = cv2.imencode('.jpg', resized_frame, encode_param)
 
-            # Pack the length of the compressed data
-            message_size = struct.pack("L", len(buffer))
+                # Pack the length of the compressed data
+                message_size = struct.pack("L", len(buffer))
 
-            # Send the message size and the compressed frame data
-            client_socket.sendall(message_size + buffer.tobytes())
-        # Stop the program if the ESC key is pressed.
+                # Send the message size and the compressed frame data
+                client_socket.sendall(message_size + buffer.tobytes())
+
+        # Read the key input
         key = cv2.waitKey(1)
-        if key == 27:
+        if key == 27:       # Press ESC to close the graphic module
             break
-        elif key == ord('q'):
-            instrument_type = 'Chord' if instrument_type == 'Percussion' else 'Chord'
+        elif key == 113:    # Press Q to switch instrument types
+            instrument_type = "Chord" if instrument_type == "Percussion" else "Percussion"
             # Update areas to match new areas
             areas = define_areas(handedness, instrument_type, chord_list)
 
