@@ -88,10 +88,8 @@ class Recognizer:
         }
         """
 
-        recognition_results = copy.deepcopy(self.recognition_result_list)
-
         transformed_results = []
-        for recognition_result in recognition_results:
+        for recognition_result in self.recognition_result_list:
             transformed_outputs = []
             # Transform the results for decision box
             for hand_index, hand_landmarks in enumerate(
@@ -158,7 +156,7 @@ within_percentage = 0.8
 
 # Class for screen division
 class Area:
-    def __init__(self, name, type="Rectangle", x_min=-1, y_min=-1, x_max=-1, y_max=-1, radius=-1, center=(-1,-1)):
+    def __init__(self, name, type="Rectangle", x_min=-1, y_min=-1, x_max=-1, y_max=-1, radius=-1, center=(-1,-1), instrument_type=None):
         self.name = name
         self.type = type
 
@@ -171,11 +169,24 @@ class Area:
         self.radius = radius
         self.center = center
 
+        self.instrument_type = instrument_type
+
     def is_within(self, hand_landmarks):
         counter = 0
 
+        # Only check a set of paticular landmarks
+        target_hand_landmarks = []
+        target_landmark_indices = [2, 3, 4]
+
+        if self.instrument_type == "Percussion":
+            for target_landmark_index in target_landmark_indices:
+                target_hand_landmarks.append(hand_landmarks[target_landmark_index])
+        else:
+            target_hand_landmarks = hand_landmarks
+        
+        # Check if all target landmarks are inside of current area
         if self.type == "Rectangle":
-            for landmark in hand_landmarks:
+            for landmark in target_hand_landmarks:
                 if (
                     landmark.x > self.x_min
                     and landmark.x < self.x_max
@@ -184,14 +195,14 @@ class Area:
                 ):
                     counter += 1
         else:
-            for landmark in hand_landmarks:
+            for landmark in target_hand_landmarks:
                 center_x, center_y = self.center
                 distance_squared = (landmark.x - center_x)**2 + (landmark.y - center_y)**2
                 if distance_squared <= self.radius**2:
                     counter += 1
                 
 
-        if counter >= len(hand_landmarks) * within_percentage:
+        if counter >= len(target_hand_landmarks) * within_percentage:
             return True
         else:
             return False

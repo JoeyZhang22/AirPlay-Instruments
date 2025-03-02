@@ -1,7 +1,6 @@
 import sys
 import time
 
-import cv2
 import socket
 import struct
 
@@ -14,8 +13,7 @@ division_area = mediapipe_utils.Area
 # Global variables to calculate FPS
 COUNTER, FPS = 0, 0
 START_TIME = time.time()
-FPS_REFREASH_COUNT = 10
-
+FPS_REFREASH_COUNT = 15
 # Create a socket object
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 host_name = socket.gethostname()
@@ -33,8 +31,6 @@ except socket.error as e:
     print(f"Error binding or accepting connection: {e}")
     sys.exit(1)
 
-
-
 # update FPS on display
 def update_fps():
     global FPS, COUNTER, START_TIME, FPS_REFREASH_COUNT
@@ -45,6 +41,8 @@ def update_fps():
         FPS = FPS_REFREASH_COUNT / (time.time() - START_TIME)
         START_TIME = time.time()
 
+def increment_fps():
+    global COUNTER
     COUNTER += 1
 
 
@@ -137,12 +135,24 @@ def define_areas(handedness, instrument_type, name_list):
 
         populate_percersive_names_rect(top_areas, bottom_areas)
 
+        # Percusiion area parameters
+        percussion_area_type = "Rectangle"
+        box_height = 0.25
+        top_areas_initial_height = 0.25
+        bottom_areas_initial_height = 1 - box_height
+
         # initialize expressive areas, for dimension we use normalized values to match results from the recognizer
         top_stride = 1 / len(top_areas)
         for i in range(len(top_areas)):
             areas.append(
                 division_area(
-                    top_areas[i], "Rectangle", top_stride * i, 0, top_stride * (i + 1), 0.3
+                    top_areas[i],
+                    percussion_area_type,
+                    top_stride * i,
+                    top_areas_initial_height,
+                    top_stride * (i + 1), 
+                    top_areas_initial_height + box_height,
+                    instrument_type=instrument_type
                 )
             )
 
@@ -150,7 +160,13 @@ def define_areas(handedness, instrument_type, name_list):
         for i in range(len(bottom_areas)):
             areas.append(
                 division_area(
-                    bottom_areas[i], "Rectangle", top_stride * i, 0.7, top_stride * (i + 1), 1
+                    bottom_areas[i], 
+                    percussion_area_type, 
+                    bottom_stride * i, 
+                    bottom_areas_initial_height, 
+                    bottom_stride * (i + 1), 
+                    bottom_areas_initial_height + box_height,
+                    instrument_type=instrument_type
                 )
             )
 
@@ -229,7 +245,7 @@ def run_graphic(
 
         # Show the FPS
         current_frame = image
-        #opencv_utils.draw_fps(current_frame, FPS)
+        opencv_utils.draw_fps(current_frame, FPS)
 
         # Draw the divison lines
         opencv_utils.draw_division_lines(current_frame, areas)
@@ -237,6 +253,8 @@ def run_graphic(
         for recognition_result in recognition_result_list:
             if not recognition_result:
                 continue
+
+            increment_fps()
             update_fps()
             opencv_utils.draw_gesture_labels(recognition_result, current_frame)
 
@@ -254,9 +272,9 @@ def run_graphic(
         # Diplay the frame on window with labelling
         if recognition_frame is not None:
             # Standarize resolution
-            resized_frame = cv2.resize(recognition_frame, (1440, 900))
+            current_resolution = (1440, 900)
+            resized_frame = cv2.resize(recognition_frame, current_resolution)
             # cv2.imshow("gesture_recognition", resized_frame)
-
             # Compress the frame into JPEG format (adjust quality as needed)
             encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 90]  # Quality from 0 to 100
             _, buffer = cv2.imencode('.jpg', resized_frame, encode_param)
@@ -266,13 +284,14 @@ def run_graphic(
 
             # Send the message size and the compressed frame data
             client_socket.sendall(message_size + buffer.tobytes())
-
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                break
-
         # Stop the program if the ESC key is pressed.
-        if cv2.waitKey(1) == 27:
+        key = cv2.waitKey(1)
+        if key == 27:
             break
+        elif key == ord('q'):
+            instrument_type = 'Chord' if instrument_type == 'Percussion' else 'Chord'
+            # Update areas to match new areas
+            areas = define_areas(handedness, instrument_type, chord_list)
 
     # Destruction upon exit
     recognizer.close()
