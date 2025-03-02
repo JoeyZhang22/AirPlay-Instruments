@@ -55,6 +55,8 @@ def main():
     # Start the graphic thread
     decision_thread.start()
 
+    chord_list = ['A', 'B', 'C']
+
     graphic.run_graphic(
         args.model,
         int(args.numHands),
@@ -68,7 +70,8 @@ def main():
         result_queue,  # Queue object for passing results
         result_event,  # Event object for signaling
         args.handedness,
-        "Perussion",   # Insturment Mode, "Percussion" or "Expressive"
+        "Percussion",   # Insturment Mode, "Percussion" or "Expressive"
+        chord_list,
     )
 
 
