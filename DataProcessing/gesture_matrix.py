@@ -1,8 +1,10 @@
 # Everything in this file has been moved to chord_decision_block.py
 
 def generate_chord_matrix():
+
     # Base chord list
-    chord_list = ["Gb", "Db", "Ab", "Eb", "Bb", "F", "C", "G", "D", "A", "E", "B", "F#", "C#", "G#", "D#", "A#"]
+    chord_list = ["Gb", "Db", "Ab", "Eb", "Bb", "F", "C", "G", 
+                  "D", "A", "E", "B", "F#", "C#", "G#", "D#", "A#"]
 
     # Initial empty dictionary for gesture-to-chord mappings
     gesture_to_chord = {
