@@ -41,7 +41,7 @@ def main():
     result_event = threading.Event()
 
     # Initialize Decision Block
-    decision_block_object = percussionDecisionBlock()
+    decision_block_object = chordDecisionBlock()
 
     # Create a thread to run graphic.run_graphic
     decision_thread = threading.Thread(
@@ -70,7 +70,7 @@ def main():
         result_queue,  # Queue object for passing results
         result_event,  # Event object for signaling
         args.handedness,
-        "Percussion",   # Insturment Mode, "Percussion" or "Expressive"
+        "Chord",   # Insturment Mode, "Percussion" or "Expressive"
         chord_list,
     )
 
