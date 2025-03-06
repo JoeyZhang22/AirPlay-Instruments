@@ -65,6 +65,7 @@ class chordDecisionBlock:
         else:
             self.getHands(recognizer_results)
             if (
+                self.chord_hand is not None and
                 self.chord_hand.get("Gesture_Type") == "None"
                 or self.chord_hand.get("Area") == "None"
                 or self.strum_hand.get("Area") == "None"
@@ -136,11 +137,11 @@ class chordDecisionBlock:
         if not reverse:
             for note in chord:
                 self.output_port.send(note_on(note=note))
-                sleep(0.05)
+                # sleep(0.05)
         else:
             for note in reversed(chord):
                 self.output_port.send(note_on(note=note))
-                sleep(0.05)
+                # sleep(0.05)
 
     def off(self, chord):
         for note in chord:

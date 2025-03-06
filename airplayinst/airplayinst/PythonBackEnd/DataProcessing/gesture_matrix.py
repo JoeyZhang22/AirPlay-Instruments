@@ -2,7 +2,7 @@ import json
 
 def generate_mappings():
     try:
-        with open("gesture_mappings.json", "r") as json_file:
+        with open("/Users/joeyzhang/Documents/git/school/AirPlay-Instruments/gesture_mappings.json", "r") as json_file:
             loaded_data = json.load(json_file)
     except FileNotFoundError:
         print("Error: gesture_mappings.json not found.")

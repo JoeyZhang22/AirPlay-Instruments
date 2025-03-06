@@ -48,13 +48,13 @@ def add_argument():
         "--frameWidth",
         help="Width of frame to capture from camera.",
         required=False,
-        default=640,
+        default=920,
     )
     parser.add_argument(
         "--frameHeight",
         help="Height of frame to capture from camera.",
         required=False,
-        default=480,
+        default=720,
     )
     parser.add_argument(
         "--handedness",

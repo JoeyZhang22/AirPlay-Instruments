@@ -11,7 +11,7 @@ import MediaPipe.opencv_utils as opencv_utils
 division_area = mediapipe_utils.Area
 
 # TESTER
-TEST_ENABLED = False
+TEST_ENABLED = True
 
 # Global variables to calculate FPS
 COUNTER, FPS = 0, 0
@@ -88,7 +88,7 @@ def populate_percersive_names_rect(top_names, bottom_names):
     bottom_names.append("Kick")
     bottom_names.append("Tom Low")
 
-def define_areas(handedness, instrument_type, name_list=['Major', 'Minor', 'Dominant']): #removed name_list variable because chord matrix is not implemented on gui yet
+def define_areas(handedness, instrument_type, name_list=['Dominant7', 'Major', 'Minor']): #removed name_list variable because chord matrix is not implemented on gui yet
     """
     For now, the screen is divided to 6 parts by default:
       Top-left:     Strum up
