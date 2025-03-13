@@ -162,13 +162,20 @@ def draw_division_lines(current_frame, areas):
             x_max = int(area.x_max * frame_width)
             y_min = int(area.y_min * frame_height)
             y_max = int(area.y_max * frame_height)
-
+            
+            # Top Line
             if y_min != 0:
                 draw_dashed_line(current_frame, (x_min, y_min), (x_max, y_min), line_color, line_thickness)
 
+            # Bottom Line
             if y_max != 1:
                 draw_dashed_line(current_frame, (x_min, y_max), (x_max, y_max), line_color, line_thickness)
 
+            # Left Line
+            if x_min != 0:
+                draw_dashed_line(current_frame, (x_min, y_min), (x_min, y_max), line_color, line_thickness)
+
+            # Right Line
             if x_max != 1:
                 draw_dashed_line(current_frame, (x_max, y_min), (x_max, y_max), line_color, line_thickness)
             
