@@ -126,7 +126,8 @@ def draw_gesture_labels(recognition_result, current_frame):
 
         # Test Finger up
         finger_status = mediapipe_utils.is_finger_up(hand_landmarks)
-        hand_result["Finger_Status"] = finger_status
+        diatonic_num = mediapipe_utils.fingers_status_to_diatonic(finger_status)
+        hand_result["Diatonic_Number"] = diatonic_num
 
 
 def draw_division_lines(current_frame, areas):

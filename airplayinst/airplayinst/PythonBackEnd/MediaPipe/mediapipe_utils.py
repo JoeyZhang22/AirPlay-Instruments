@@ -84,7 +84,7 @@ class Recognizer:
         "Gesture_Landmarks" :
         "Score" :
         "Time" :
-        "Finger_Status" :
+        "Diatonic_Number" :
         "Openess" :
         "Local_Position" :
         }
@@ -322,3 +322,24 @@ def is_finger_up(hand_landmarks: List[NormalizedLandmark]) -> dict:
         fingers_status[finger] = segment_angle > 160 and projection > 0
 
     return fingers_status
+
+# Determines the number represented by a hand gesture based on finger status.
+def fingers_status_to_diatonic(finger_status):
+    gesture_mapping = {
+        (False, False, False, False, False): 0,
+        (False, True, False, False, False): 1,
+        (False, True, True, False, False): 2,
+        (True, True, True, False, False): 3,
+        (False, True, True, True, False): 3,
+        (False, True, True, True, True): 4,
+        (True, True, True, True, True): 5,
+        (True, False, False, False, True): 6
+    }
+    
+    # Convert dictionary values to a tuple for lookup
+    finger_tuple = (finger_status["thumb"], finger_status["index"], 
+                    finger_status["middle"], finger_status["ring"], 
+                    finger_status["pinky"])
+    
+    return gesture_mapping.get(finger_tuple, -1)  # Return -1 if the gesture is unrecognized
+
