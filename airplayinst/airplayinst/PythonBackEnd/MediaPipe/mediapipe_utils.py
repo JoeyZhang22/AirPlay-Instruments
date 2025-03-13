@@ -1,6 +1,6 @@
 # Scripts to run MediaPipe for gesture recognition.
-import copy
 import time
+import math
 
 from typing import List
 from enum import Enum
@@ -85,6 +85,8 @@ class Recognizer:
         "Score" :
         "Time" :
         "Finger_Status" :
+        "Openess" :
+        "Local_Position" :
         }
         """
 
@@ -118,6 +120,8 @@ class Recognizer:
                 for area in areas:
                     if area.is_within(hand_landmarks):
                         transformed_output["Area"] = area.name
+                        transformed_output["Openess"] = area.get_thenar_openess(hand_landmarks)
+                        transformed_output["Local_Position"] = area.get_local_position(hand_landmarks)
                         break
 
                 transformed_outputs.append(transformed_output)
@@ -150,10 +154,6 @@ def draw_landmarks(image, hand_landmarks):
         mp_drawing_styles.get_default_hand_connections_style(),
     )
 
-
-# If more than this within_percentage of the hand appeared in the area, then return true for Area.is_within()
-within_percentage = 0.8
-
 # Class for screen division
 class Area:
     def __init__(self, name, type="Rectangle", x_min=-1, y_min=-1, x_max=-1, y_max=-1, radius=-1, center=(-1,-1), instrument_type=None):
@@ -171,7 +171,7 @@ class Area:
 
         self.instrument_type = instrument_type
 
-    def is_within(self, hand_landmarks):
+    def is_within(self, hand_landmarks, within_percentage=0.8):
         counter = 0
 
         # Only check a set of paticular landmarks
@@ -206,6 +206,46 @@ class Area:
             return True
         else:
             return False
+
+    # Find the hand's relative position to local frame area
+    # Local coordinates will all be normalized (.i.e from 0.0 - 1.0)
+    # If returns 0,0 then the hand is not within the area
+    def get_local_position(self, hand_landmarks):
+        x_coord_local = 0
+        y_coord_local = 0
+
+        # To get_local_position, all the landmarks need to be present in the area
+        if self.is_within(hand_landmarks, 1) == False:
+            return (x_coord_local, y_coord_local)
+        
+        # Will use the wrist as reference point
+        wrist_landmark = hand_landmarks[0]
+        x_coord_local = (wrist_landmark.x - self.x_min)/(self.x_max - self.x_min)
+        y_coord_local = (wrist_landmark.y - self.y_min)/(self.y_max - self.y_min)
+
+        # invert y to match human intuition
+        y_coord_local = 1 - y_coord_local
+
+        return (x_coord_local, y_coord_local)
+    
+    # Find how open is the thenar area
+    # returns a normalized value(.i.e from 0.0 - 1.0)
+    def get_thenar_openess(self, hand_landmarks):
+        thumb_tip_landmark = hand_landmarks[4]
+        index_tip_landmark = hand_landmarks[8]
+
+        mid_tip_landmark = hand_landmarks[12]
+        wrist_landmark = hand_landmarks[0]
+
+        # take the distance between middle finger tip and wrist as the norm
+        thenar_norm = math.sqrt((mid_tip_landmark.x - wrist_landmark.x)**2 + (mid_tip_landmark.y - wrist_landmark.y)**2 + (mid_tip_landmark.z - wrist_landmark.z)**2)
+        thenar_distance = math.sqrt((thumb_tip_landmark.x - index_tip_landmark.x)**2 + (thumb_tip_landmark.y - index_tip_landmark.y)**2 + (thumb_tip_landmark.z - index_tip_landmark.z)**2)
+        
+        # if greater than 1, floor to 1
+        openess = thenar_distance/thenar_norm
+        openess = 1 if openess > 1 else openess
+
+        return openess
 
     def draw_label(
         self, current_frame, frame_width, frame_height, line_color, text_color
