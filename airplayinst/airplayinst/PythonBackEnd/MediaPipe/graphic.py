@@ -281,7 +281,7 @@ def run_graphic(
         opencv_utils.draw_fps(current_frame, FPS)
 
         # Draw the divison lines
-        opencv_utils.draw_division_lines(current_frame, areas)
+        opencv_utils.draw_division_lines(current_frame, areas, instrument_type=="Expressive")
 
         for recognition_result in recognition_result_list:
             if not recognition_result:
@@ -291,7 +291,7 @@ def run_graphic(
             update_fps()
             opencv_utils.draw_gesture_labels(recognition_result, current_frame)
 
-            # Temp: remoe gesture_landmarks from result
+            # Temp: remove gesture_landmarks from result
             recognition_result[0].pop("Gesture_Landmarks")
             if len(recognition_result) > 1:
                 recognition_result[1].pop("Gesture_Landmarks")
