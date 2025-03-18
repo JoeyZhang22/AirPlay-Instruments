@@ -9,7 +9,7 @@ def add_argument():
         "--model",
         help="Name of gesture recognition model.",
         required=False,
-        default="MediaPipe/gesture_recognizer.task",
+        default="/Users/joeyzhang/Documents/git/school/AirPlay-Instruments/AirplayInst/airplayinst/PythonBackEnd/MediaPipe/gesture_recognizer.task",
     )
     parser.add_argument(
         "--numHands",

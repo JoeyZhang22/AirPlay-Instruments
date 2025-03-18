@@ -11,7 +11,7 @@ import MediaPipe.opencv_utils as opencv_utils
 division_area = mediapipe_utils.Area
 
 # TESTER
-TEST_ENABLED = True
+TEST_ENABLED = False
 
 # Global variables to calculate FPS
 COUNTER, FPS = 0, 0

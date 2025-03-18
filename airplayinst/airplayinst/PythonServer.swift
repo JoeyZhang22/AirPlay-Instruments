@@ -12,22 +12,40 @@ class PythonServer: ObservableObject {
     private var process: Process?
     @Published var isRunning: Bool = false // Published property to track server state
 
-    func start() {
-        // Define the absolute path of the Python script
-        let scriptPath = "/Users/joeyzhang/Documents/git/school/AirPlay-Instruments/AirplayInst/airplayinst/PythonBackEnd/main.py"
+    func start(scriptPath: String, instrumentType: String) {
         // Ensure the correct Python interpreter path
         let pythonPath = "/usr/bin/python3" // Adjust if necessary
+        let ConfigFilePath: String = "gesture_mappings.json" // Default rn. Adjust when needed
 
+        // Determine instrument mode argument
+        var instrumentArg = "E" // Default to Expressive
+        switch instrumentType.lowercased() {
+        case "chord":
+            instrumentArg = "C"
+        case "percussion":
+            instrumentArg = "P"
+        case "expressive":
+            instrumentArg = "E"
+        default:
+            print("Invalid instrument type provided. Defaulting to Expressive.")
+        }
+       
         // Create the Process instance
         process = Process()
-        process?.launchPath = pythonPath // Use `launchPath` for executing the Python interpreter
+        process?.launchPath = pythonPath
         
-        // Set arguments for the Python script (no arguments if not needed)
-        process?.arguments = ["-u", scriptPath] // `-u` for unbuffered output
-
-        // Set the script’s directory as the working directory (important for relative paths)
-        let scriptDirectory = (scriptPath as NSString).deletingLastPathComponent
-        process?.currentDirectoryPath = scriptDirectory
+        // Pass -u, scriptPath, and other arguments (splitting each argument correctly)
+        process?.arguments = [
+            "-u",
+            scriptPath,          // Path to the Python script
+            "--instrument",
+            instrumentArg,       // Instrument argument (e.g., --instrument C)
+            "--config",          // Flag for the config file
+            ConfigFilePath      // Path to the config file
+        ]
+        
+        // Print the command being sent (for debugging)
+        print("Command Line Arguments: \(process?.arguments ?? [])")
 
         // Set up output handling
         let outputPipe = Pipe()
@@ -46,12 +64,11 @@ class PythonServer: ObservableObject {
         do {
             try process?.run()
             isRunning = true
-            print("Python server started successfully")
+            print("Python server started successfully with instrument mode: \(instrumentType)")
         } catch {
             print("Failed to start Python server: \(error)")
         }
     }
-
     func stop() {
         // Stop the server process
         process?.terminate()

@@ -128,7 +128,7 @@ class expressiveDecisionBlock:
             area = self.chord_hand.get("Area")
             print("left hand gesture: ", gesture)
             print("left hand area: ", area)
-            chord = self.midi_chord_list[chordMatrix[area][gesture]]
+            chord = self.midi_chord_list[self.chordMatrix[area][gesture]]
             self.actor(perform_action=action, chord=chord)
         elif action == actions.MANIPULATE:
             print(recognizer_results)
