@@ -18,7 +18,8 @@ class actions(Enum):
 """Corresponding action can be determined via: decisionMatrix[prev_state][cur_state] where prev_state and cur_state are instrumentState enums"""
 decisionMatrix = [
     [actions.NULL, actions.PLAY],
-    [actions.STOP, actions.STOP]
+    [actions.STOP, actions.STOP # test to see if actions.STOP here should be switched to actions.NULL 
+    ] 
 ]
 
 percussion_note_matrix = {

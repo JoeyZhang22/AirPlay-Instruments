@@ -8,7 +8,8 @@ import MediaPipe.graphic as graphic
 
 # Import Decision Blocks
 from DataProcessing.chord_decision_block import chordDecisionBlock
-from DataProcessing.percussion_decision_block import percussionDecisionBlock
+# from DataProcessing.percussion_decision_block import percussionDecisionBlock
+from DataProcessing.expression_decision_block import expressiveDecisionBlock
 
 
 def decision_block(result_event, result_queue, decision_block_object):
@@ -41,7 +42,7 @@ def main():
     result_event = threading.Event()
 
     # Initialize Decision Block
-    decision_block_object = chordDecisionBlock()
+    decision_block_object = expressiveDecisionBlock()
 
     # Create a thread to run graphic.run_graphic
     decision_thread = threading.Thread(
@@ -70,7 +71,7 @@ def main():
         result_queue,  # Queue object for passing results
         result_event,  # Event object for signaling
         args.handedness,
-        "Chord",   # Insturment Mode, "Percussion" or "Expressive"
+        "Expressive",   # Insturment Mode, "Percussion" or "Expressive"
         chord_list,
     )
 
