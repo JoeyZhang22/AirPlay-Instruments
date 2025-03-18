@@ -101,7 +101,7 @@ def define_areas(handedness, instrument_type, name_list=['Dominant7', 'Major', '
     """
     areas = []
 
-    if instrument_type == "Expressive" or instrument_type == "Chord":
+    if instrument_type == "Chord":
         # define area names based on handedness, the prefered hand will be used for strum area
         left_areas = []
         right_areas = []
@@ -129,6 +129,25 @@ def define_areas(handedness, instrument_type, name_list=['Dominant7', 'Major', '
                     right_areas[i], "Rectangle", 0.5, 0 + right_stride * i, 1, right_stride * (i + 1)
                 )
             )
+    elif instrument_type == "Expressive":
+        # define area names based on handedness, the prefered hand will be used for strum area
+        left_areas = name_list
+
+        left_stride = 1 / len(left_areas)
+        for i in range(len(left_areas)):
+            areas.append(
+                division_area(
+                    left_areas[i], "Rectangle", 0, 0 + left_stride * i, 0.5, left_stride * (i + 1)
+                )
+            )
+
+        # Define right area which will later be used to manipulate the expression
+        manipulate_area_name = 'Manipulation'
+        areas.append(
+            division_area(
+                manipulate_area_name, "Rectangle", 0.5, 0, 1, 1
+            )
+        )
     else:
         # define area names based on handedness, the prefered hand will be used for strum area
         top_areas = []
@@ -145,17 +164,30 @@ def define_areas(handedness, instrument_type, name_list=['Dominant7', 'Major', '
         # initialize expressive areas, for dimension we use normalized values to match results from the recognizer
         top_stride = 1 / len(top_areas)
         for i in range(len(top_areas)):
-            areas.append(
-                division_area(
-                    top_areas[i],
-                    percussion_area_type,
-                    top_stride * i,
-                    top_areas_initial_height,
-                    top_stride * (i + 1), 
-                    top_areas_initial_height + box_height,
-                    instrument_type=instrument_type
+            if i == 0 or i == len(top_areas)-1:
+                areas.append(
+                    division_area(
+                        top_areas[i],
+                        percussion_area_type,
+                        top_stride * i,
+                        top_areas_initial_height + box_height,
+                        top_stride * (i + 1), 
+                        top_areas_initial_height + box_height + box_height,
+                        instrument_type=instrument_type
+                    )
                 )
-            )
+            else:
+                areas.append(
+                    division_area(
+                        top_areas[i],
+                        percussion_area_type,
+                        top_stride * i,
+                        top_areas_initial_height,
+                        top_stride * (i + 1), 
+                        top_areas_initial_height + box_height,
+                        instrument_type=instrument_type
+                    )
+                )
 
         bottom_stride = 1 / len(bottom_areas)
         for i in range(len(bottom_areas)):
@@ -249,7 +281,7 @@ def run_graphic(
         opencv_utils.draw_fps(current_frame, FPS)
 
         # Draw the divison lines
-        opencv_utils.draw_division_lines(current_frame, areas)
+        opencv_utils.draw_division_lines(current_frame, areas, instrument_type=="Expressive")
 
         for recognition_result in recognition_result_list:
             if not recognition_result:
@@ -259,7 +291,7 @@ def run_graphic(
             update_fps()
             opencv_utils.draw_gesture_labels(recognition_result, current_frame)
 
-            # Temp: remoe gesture_landmarks from result
+            # Temp: remove gesture_landmarks from result
             recognition_result[0].pop("Gesture_Landmarks")
             if len(recognition_result) > 1:
                 recognition_result[1].pop("Gesture_Landmarks")

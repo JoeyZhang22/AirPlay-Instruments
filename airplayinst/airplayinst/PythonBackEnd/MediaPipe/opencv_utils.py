@@ -126,10 +126,11 @@ def draw_gesture_labels(recognition_result, current_frame):
 
         # Test Finger up
         finger_status = mediapipe_utils.is_finger_up(hand_landmarks)
-        hand_result["Finger_Status"] = finger_status
+        diatonic_num = mediapipe_utils.fingers_status_to_diatonic(finger_status)
+        hand_result["Diatonic_Number"] = diatonic_num
 
 
-def draw_division_lines(current_frame, areas):
+def draw_division_lines(current_frame, areas, need_arrow=False):
     """
     For now, the screen is divided to 6 parts:
       Top-left:     Strum up
@@ -153,6 +154,11 @@ def draw_division_lines(current_frame, areas):
             line_color,
             line_thickness,
         )
+    # Draw the arrow
+    if need_arrow:
+        arrow_start = (0.975, 0.85)
+        arrow_end = (0.975, 0.10) # arrow tip
+        draw_arrow(current_frame, arrow_start, arrow_end)
 
     # Draw Labels for each area
     area_label_color = (88, 233, 88)  # light green
@@ -162,13 +168,20 @@ def draw_division_lines(current_frame, areas):
             x_max = int(area.x_max * frame_width)
             y_min = int(area.y_min * frame_height)
             y_max = int(area.y_max * frame_height)
-
+            
+            # Top Line
             if y_min != 0:
                 draw_dashed_line(current_frame, (x_min, y_min), (x_max, y_min), line_color, line_thickness)
 
+            # Bottom Line
             if y_max != 1:
                 draw_dashed_line(current_frame, (x_min, y_max), (x_max, y_max), line_color, line_thickness)
 
+            # Left Line
+            if x_min != 0:
+                draw_dashed_line(current_frame, (x_min, y_min), (x_min, y_max), line_color, line_thickness)
+
+            # Right Line
             if x_max != 1:
                 draw_dashed_line(current_frame, (x_max, y_min), (x_max, y_max), line_color, line_thickness)
             
@@ -215,3 +228,56 @@ def draw_dashed_line(image, start_point, end_point, color, thickness, dash_lengt
             end_x, end_y = x2, y2
         
         cv2.line(image, (start_x, start_y), (end_x, end_y), color, thickness)
+
+
+def draw_arrow(image, start_point, end_point, color=(0, 255, 223), thickness=8):
+    height, width, _ = image.shape
+    
+    # Convert normalized points to pixel values
+    pt1 = (int(start_point[0] * width), int(start_point[1] * height))
+    pt2 = (int(end_point[0] * width), int(end_point[1] * height))
+    
+    # Compute the angle of the arrow
+    angle = np.arctan2(pt2[1] - pt1[1], pt2[0] - pt1[0])
+    
+    # Compute equilateral triangle arrowhead size
+    arrow_size = thickness * 3  # Ensure it's properly sized
+    height_equilateral = (np.sqrt(3) / 2) * arrow_size
+    
+    # Shorten the shaft to avoid overlap with the arrowhead
+    shaft_end_x = int(pt2[0] - height_equilateral * np.cos(angle))
+    shaft_end_y = int(pt2[1] - height_equilateral * np.sin(angle))
+    shaft_end = (shaft_end_x, shaft_end_y)
+    
+    # Define rectangle width for the shaft of the arrow
+    half_thickness = thickness // 2
+    
+    # Compute the perpendicular direction for the rectangle width
+    perp_angle = angle + np.pi / 2
+    
+    # Compute rectangle corners for the shorter shaft
+    rect_p1 = (int(pt1[0] + half_thickness * np.cos(perp_angle)),
+               int(pt1[1] + half_thickness * np.sin(perp_angle)))
+    rect_p2 = (int(pt1[0] - half_thickness * np.cos(perp_angle)),
+               int(pt1[1] - half_thickness * np.sin(perp_angle)))
+    rect_p3 = (int(shaft_end[0] - half_thickness * np.cos(perp_angle)),
+               int(shaft_end[1] - half_thickness * np.sin(perp_angle)))
+    rect_p4 = (int(shaft_end[0] + half_thickness * np.cos(perp_angle)),
+               int(shaft_end[1] + half_thickness * np.sin(perp_angle)))
+    
+    # Draw the rectangle shaft
+    shaft_points = np.array([rect_p1, rect_p2, rect_p3, rect_p4], np.int32)
+    cv2.fillPoly(image, [shaft_points], color)
+    
+    # Compute arrowhead triangle points
+    arrow_tip = pt2
+    left_tip = (int(pt2[0] - height_equilateral * np.cos(angle + np.pi / 6)),
+                int(pt2[1] - height_equilateral * np.sin(angle + np.pi / 6)))
+    right_tip = (int(pt2[0] - height_equilateral * np.cos(angle - np.pi / 6)),
+                 int(pt2[1] - height_equilateral * np.sin(angle - np.pi / 6)))
+    
+    # Draw the arrowhead as an equilateral triangle
+    triangle_cnt = np.array([arrow_tip, left_tip, right_tip], np.int32)
+    cv2.fillPoly(image, [triangle_cnt], color)
+    
+    return image
