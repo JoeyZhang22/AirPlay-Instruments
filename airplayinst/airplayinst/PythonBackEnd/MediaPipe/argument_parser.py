@@ -63,4 +63,14 @@ def add_argument():
         default="right",
     )
 
+
+    # ADDITIONAL ARGS added for instrument mode and config file path
+    parser.add_argument(
+        "--instrument",
+        choices=["C", "E", "P"],
+        required=True,
+        help="Instrument type: C (Chord), E (Expressive), P (Percussive)",
+    )
+    parser.add_argument("--config", required=True, help="Path to chord_config.json")
+
     return parser.parse_args()

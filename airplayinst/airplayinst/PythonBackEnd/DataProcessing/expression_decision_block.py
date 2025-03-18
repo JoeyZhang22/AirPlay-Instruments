@@ -34,17 +34,6 @@ from MIDI.continuous_player import *
 from MIDI.chord_player import *
 from DataProcessing.gesture_matrix import generate_mappings
 
-# generate chord_list
-def chords_list(chord_matrix):
-    all_chords = set()
-    for mappings in chord_matrix.values():
-        all_chords.update(chord for chord in mappings.values() if chord is not None)
-    return list(all_chords)
-
-chordMatrix = generate_mappings()
-chord_list = chords_list(chordMatrix)
-print(chord_list)
-
 # Maintain instrument states
 class expressiveInstrumentState(Enum):
     NEUTRAL = 0
@@ -72,16 +61,25 @@ MIDI_expressive_control_mapping = {
 }
 
 class expressiveDecisionBlock:
-    def __init__(self, output_port="Logic Pro Virtual In"): # "Logic Pro Virtual In"
-        # Initialize MIDI output port, default is Logic Pro Virtual In
+    def __init__(self, output_port="Logic Pro Virtual In", config_file_path = "/gesture_mappings.json"): # "Logic Pro Virtual In"
+        print("expressiveDecisionBlock Initialized!")
         self.output_port = mido.open_output(output_port)
-        self.chord_list = chord_list
+        self.chordMatrix = generate_mappings(config_path=config_file_path)
+        self.get_chords_list(chord_matrix=self.chordMatrix)
         self.midi_chord_list = convert_chord_to_midi_chord(self.chord_list)
         self.state = expressiveInstrumentState.NEUTRAL
         self.prev_state = expressiveInstrumentState.NEUTRAL
         self.prev_chord_index = -1  # Initialized to -1 to indicate no previous chord
         self.chord_hand = None
         self.control_hand = None
+
+    def get_chords_list(self,chord_matrix):
+        all_chords = set()
+        for mappings in chord_matrix.values():
+            all_chords.update(chord for chord in mappings.values() if chord is not None)
+        
+        self.chord_list = list(all_chords)
+        print(self.chord_list)
 
     def getHands(
         self, recognizer_results

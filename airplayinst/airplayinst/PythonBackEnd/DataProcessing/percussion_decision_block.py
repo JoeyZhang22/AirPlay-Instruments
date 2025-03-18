@@ -43,10 +43,8 @@ percussion_note_matrix = {
 
 class percussionDecisionBlock:
     def __init__(self, output_port="Logic Pro Virtual In"): # "Logic Pro Virtual In"
-        # Initialize MIDI output port, default is Logic Pro Virtual In
+        print("percussionDecisionBlock Initialized!")
         self.output_port = mido.open_output(output_port)
-
-        # Track the state for both hands
         self.state_l = percussionInstrumentState.NEUTRAL 
         self.state_r = percussionInstrumentState.NEUTRAL
         self.prev_instrument_l = None

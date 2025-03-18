@@ -8,7 +8,7 @@ import MediaPipe.graphic as graphic
 
 # Import Decision Blocks
 from DataProcessing.chord_decision_block import chordDecisionBlock
-# from DataProcessing.percussion_decision_block import percussionDecisionBlock
+from DataProcessing.percussion_decision_block import percussionDecisionBlock
 from DataProcessing.expression_decision_block import expressiveDecisionBlock
 
 
@@ -41,8 +41,19 @@ def main():
     result_queue = queue.Queue()
     result_event = threading.Event()
 
-    # Initialize Decision Block
-    decision_block_object = expressiveDecisionBlock()
+    # Map the instrument type argument to its mode
+    if args.instrument == 'C':
+        instrument_mode = "Chord"
+        print("CHORD INSTRUMENT MODE")
+        decision_block_object = chordDecisionBlock(config_file_path=args.config)
+    elif args.instrument == 'E':
+        instrument_mode = "Expressive"
+        decision_block_object = expressiveDecisionBlock(config_file_path=args.config)
+    elif args.instrument == 'P':
+        instrument_mode = "Percussion"
+        decision_block_object = percussionDecisionBlock()
+    else:
+        raise ValueError("Invalid instrument type")
 
     # Create a thread to run graphic.run_graphic
     decision_thread = threading.Thread(
@@ -56,6 +67,7 @@ def main():
     # Start the graphic thread
     decision_thread.start()
 
+    # default chord list
     chord_list = ['A', 'B', 'C']
 
     graphic.run_graphic(
@@ -71,7 +83,7 @@ def main():
         result_queue,  # Queue object for passing results
         result_event,  # Event object for signaling
         args.handedness,
-        "Expressive",   # Insturment Mode, "Percussion" or "Expressive"
+        instrument_mode,   # Insturment Mode, "Percussion" or "Expressive"
         chord_list,
     )
 

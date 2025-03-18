@@ -29,34 +29,25 @@ decisionMatrix = [
     [actions.STOP, actions.PLAY, actions.NULL],
 ]
 
-# # The ChordMatrix is currently hard-coded. In the future, it can be read from a file or generated dynamically based on user input.
-# """ChordMatrix[Area][Gesture] accesses the chord index to be played."""
-# chordMatrix = {
-#     "Major": {"Open_Palm": 0, "Closed_Fist": 1},
-#     "Minor": {"Open_Palm": 2, "Closed_Fist": 3},
-#     "Special": {"Open_Palm": 0, "Closed_Fist": 1},
-# }
-chordMatrix = generate_mappings()
-
-def chords_list(chord_matrix):
-    all_chords = set()
-    for mappings in chord_matrix.values():
-        all_chords.update(chord for chord in mappings.values() if chord is not None)
-    return list(all_chords)
-
-chord_list = chords_list(chordMatrix)
-print(chord_list)
-
 class chordDecisionBlock:
-    def __init__(self, output_port="Logic Pro Virtual In"):
-        # Initialize MIDI output port, default is Logic Pro Virtual In
+    def __init__(self, output_port="Logic Pro Virtual In", config_file_path = "../MIDI/gesture_mappings.json"):
+        print("chordDecisionBlock Initialized!")
         self.output_port = mido.open_output(output_port)
-        self.chord_list = chord_list
+        self.chordMatrix = generate_mappings(config_path=config_file_path)
+        self.get_chords_list(chord_matrix=self.chordMatrix)
         self.midi_chord_list = convert_chord_to_midi_chord(self.chord_list)
         self.state = instrumentState.NEUTRAL
         self.prev_chord_index = -1  # Initialized to -1 to indicate no previous chord
         self.chord_hand = None
         self.strum_hand = None
+
+    def get_chords_list(self,chord_matrix):
+        all_chords = set()
+        for mappings in chord_matrix.values():
+            all_chords.update(chord for chord in mappings.values() if chord is not None)
+        
+        self.chord_list = list(all_chords)
+        print(self.chord_list)
 
     def update_state(self, recognizer_results):
         if len(recognizer_results) < 2:  # Only one hand detected
@@ -103,7 +94,7 @@ class chordDecisionBlock:
             print("left hand area: ", area)
             print("right hand gesture: ", self.strum_hand.get("Gesture_Type"))
             print("right hand area: ", self.strum_hand.get("Area"))
-            chord = self.midi_chord_list[chordMatrix[area][gesture]]
+            chord = self.midi_chord_list[self.chordMatrix[area][gesture]]
             self.actor(perform_action=action, chord=chord)
         else:
             None  # Do nothing

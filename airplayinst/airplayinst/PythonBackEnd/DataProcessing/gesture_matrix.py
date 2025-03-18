@@ -1,8 +1,18 @@
 import json
+import os
+from pathlib import Path
 
-def generate_mappings():
+def generate_mappings(config_path="/gesture_mappings.json"):
+    script_dir = Path(__file__).parent.resolve()  # Get absolute path of script's directory
+    config_path = script_dir / config_path  # Combine paths safely
+    print(config_path)
+
+    if not config_path.exists():
+        print(f"Error: {config_path} not found.")
+        return None
     try:
-        with open("/Users/joeyzhang/Documents/git/school/AirPlay-Instruments/gesture_mappings.json", "r") as json_file:
+        print("Try path")
+        with open(config_path, "r") as json_file:
             loaded_data = json.load(json_file)
     except FileNotFoundError:
         print("Error: gesture_mappings.json not found.")
@@ -57,19 +67,4 @@ def generate_mappings():
             suffix = chord_types.get(section, "")
             if chord:
                 chord_matrix[section][gesture] = chord + suffix
-
-    print("\nFinal Chord Matrix:")
-    print(chord_matrix)
-
     return chord_matrix
-
-chordMatrix = generate_mappings()
-
-def chords_list(chord_matrix):
-    all_chords = set()
-    for mappings in chord_matrix.values():
-        all_chords.update(chord for chord in mappings.values() if chord is not None)
-    return list(all_chords)
-
-chord_list = chords_list(chordMatrix)
-print(chord_list)
