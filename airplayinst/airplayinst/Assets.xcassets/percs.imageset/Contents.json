@@ -1,11 +1,12 @@
 {
   "images" : [
     {
-      "filename" : "percs.jpg",
+      "filename" : "percs.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "percs.jpg",
       "idiom" : "universal",
       "scale" : "2x"
     },

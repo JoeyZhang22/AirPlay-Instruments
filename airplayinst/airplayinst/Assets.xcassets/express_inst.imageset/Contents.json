@@ -1,11 +1,12 @@
 {
   "images" : [
     {
-      "filename" : "express_inst.jpeg",
+      "filename" : "express_inst.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "express_inst.jpeg",
       "idiom" : "universal",
       "scale" : "2x"
     },

@@ -20,6 +20,7 @@ import CoreMIDI
 import SQLite3
 import CoreGraphics
 import Combine
+import SwiftUI
 
 /*
 firstpage:
@@ -152,71 +153,214 @@ class MIDISender {
 
 class StartViewController: NSViewController {
     override func loadView() {
-        view = NSView(frame: NSMakeRect(0, 0, 400, 300))
+        view = NSView(frame: NSMakeRect(0, 0, 800, 600))  // Adjusted window size for macOS
         view.wantsLayer = true
-        view.layer?.backgroundColor = NSColor.black.cgColor
-        //logo
+        // Set a gradient background
+        let navyBlue = NSColor(red: 69/255.0, green: 90/255.0, blue: 100/255.0, alpha: 1.0)
+        let lightBlue = NSColor(red: 63/255.0, green: 82/255.0, blue: 119/255.0, alpha: 1.0)
+        let steelblue = NSColor(red: 70/255.0, green: 130/255.0, blue: 180/255.0, alpha: 1.0)
+        let midnightblue = NSColor(red: 25/255.0, green: 25/255.0, blue: 112/255.0, alpha: 1.0)
+        
+        // Create gradient layer
+        let gradientLayer = CAGradientLayer()
+        gradientLayer.colors = [
+            navyBlue.cgColor,
+            lightBlue.cgColor,
+            NSColor.black.cgColor
+        ]
+        gradientLayer.frame = view.bounds
+        gradientLayer.startPoint = CGPoint(x: 0, y: 0)  // Top-left corner
+        gradientLayer.endPoint = CGPoint(x: 1, y: 1)    // Bottom-right corner
+        view.layer = gradientLayer
+
+        // Animate gradient colors
+        let colorAnimation = CABasicAnimation(keyPath: "colors")
+        colorAnimation.fromValue = [
+            navyBlue.cgColor,
+            lightBlue.cgColor,
+            NSColor.black.cgColor
+        ]
+        colorAnimation.toValue = [
+            midnightblue.cgColor,
+            steelblue.cgColor,
+            NSColor.black.cgColor
+        ]
+        colorAnimation.duration = 1.5  // Animation duration in seconds
+        colorAnimation.autoreverses = true  // Reverse the animation
+        colorAnimation.repeatCount = .infinity  // Repeat indefinitely
+        gradientLayer.add(colorAnimation, forKey: "colorChange")
+
+        
+        // Create logo image view
         let image = NSImage(named: "logo")
         if image == nil {
             print("Error: Image not found!")
             return
         }
-        //Signup
-        let sign_up_button = NSButton(title: "Sign Up", target: self, action: #selector(goToSignUpPage))
-        sign_up_button.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(sign_up_button)
-        
-        NSLayoutConstraint.activate([
-            sign_up_button.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            sign_up_button.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: 400)
-        ])
-        //Signup
-        let sign_in_button = NSButton(title: "Sign In", target: self, action: #selector(goToSignInPage))
-        sign_in_button.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(sign_in_button)
-        
-        NSLayoutConstraint.activate([
-            sign_in_button.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            sign_in_button.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: 460)
-        ])
-        
-        
-        let guest_button = NSButton(title: "Play As Guest", target: self, action: #selector(goToGuestPage))
-        guest_button.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(guest_button)
-        
-        NSLayoutConstraint.activate([
-            guest_button.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            guest_button.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: 430)
-        ])
-        
+
         let imageView = NSImageView()
         imageView.image = image
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.imageScaling = .scaleProportionallyUpOrDown
         view.addSubview(imageView)
+
+        // Make the logo circular
+        imageView.wantsLayer = true
+        imageView.layer?.cornerRadius = 300  // Half of the image size (600x600)
+        imageView.layer?.masksToBounds = true
+
+        // Add a border to the image view
+        imageView.layer?.borderWidth = 10  // Initial border width
+
+        // Adjust constraints for the image
         NSLayoutConstraint.activate([
             imageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            imageView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            imageView.widthAnchor.constraint(equalToConstant: 700),
-            imageView.heightAnchor.constraint(equalToConstant: 700)
+            imageView.topAnchor.constraint(equalTo: view.topAnchor, constant: 80),  // Move the image to the top
+            imageView.widthAnchor.constraint(equalToConstant: 600), // Adjusted image size
+            imageView.heightAnchor.constraint(equalToConstant: 600) // Adjusted image size
+        ])
+
+        // Add pulse animation to the border
+        addPulseAnimation(to: imageView)
+
+        // Add scaling animation to the logo
+        addScalingAnimation(to: imageView)
+
+        // Create a stack view for buttons
+        let stackView = NSStackView()
+        stackView.orientation = .vertical
+        stackView.alignment = .centerX
+        stackView.spacing = 20
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(stackView)
+        
+        // Create buttons and add them to the stack view
+        let sign_up_button = createButton(title: "Sign Up", action: #selector(goToSignUpPage), backgroundColor: lightBlue)
+        let sign_in_button = createButton(title: "Sign In", action: #selector(goToSignInPage), backgroundColor: lightBlue)
+        let guest_button = createButton(title: "Play As Guest", action: #selector(goToGuestPage), backgroundColor: lightBlue)
+        
+        stackView.addArrangedSubview(sign_up_button)
+        stackView.addArrangedSubview(sign_in_button)
+        stackView.addArrangedSubview(guest_button)
+        
+        // Adjust constraints for the stack view
+        NSLayoutConstraint.activate([
+            stackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            stackView.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 40)  // Adjusted spacing
         ])
     }
+    
+    // Function to add pulse animation to the border
+    func addPulseAnimation(to imageView: NSImageView) {
+        // Create an animation for the border width (pulse effect)
+        let pulseAnimation = CABasicAnimation(keyPath: "borderWidth")
+        pulseAnimation.fromValue = 10  // Initial border width
+        pulseAnimation.toValue = 20    // Maximum border width during pulse
+        pulseAnimation.duration = 1.5  // Duration of one pulse cycle
+        pulseAnimation.autoreverses = true  // Reverse the animation
+        pulseAnimation.repeatCount = .infinity  // Repeat indefinitely
 
+        // Add the animation to the image view's layer
+        imageView.layer?.add(pulseAnimation, forKey: "pulseAnimation")
+    }
+
+    // Function to add scaling animation to the logo
+    func addScalingAnimation(to imageView: NSImageView) {
+        // Create an animation for scaling the logo
+        let scaleAnimation = CABasicAnimation(keyPath: "transform.scale")
+        scaleAnimation.fromValue = 1.0  // Original size
+        scaleAnimation.toValue = 1.05   // Slightly larger size
+        scaleAnimation.duration = 2.0
+        scaleAnimation.autoreverses = true
+        scaleAnimation.repeatCount = .infinity
+
+        // Add the scaling animation to the image view's layer
+        imageView.layer?.add(scaleAnimation, forKey: "scaleAnimation")
+    }
+
+    // Helper function to create and style buttons
+    func createButton(title: String, action: Selector, backgroundColor: NSColor) -> NSButton {
+        let button = NSButton(title: title, target: self, action: action)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        styleButton(button, backgroundColor: backgroundColor)
+        addHoverEffect(to: button) // Add hover effect
+        return button
+    }
+
+    // Button styling
+    func styleButton(_ button: NSButton, backgroundColor: NSColor = .systemBlue) {
+        // Button Appearance
+        button.bezelStyle = .rounded
+        button.isBordered = false
+        button.wantsLayer = true
+        button.layer?.cornerRadius = 12  // Softer rounded corners
+        button.layer?.backgroundColor = backgroundColor.cgColor
+        button.contentTintColor = .white  // Text color
+        
+        // Font Styling
+        button.font = NSFont.systemFont(ofSize: 18, weight: .medium)  // Adjusted font size
+        
+        // Shadow styling for a more modern feel
+        button.layer?.shadowColor = NSColor.black.withAlphaComponent(0.2).cgColor
+        button.layer?.shadowOpacity = 0.2
+        button.layer?.shadowOffset = CGSize(width: 0, height: -2)  // Subtle upward shadow
+        button.layer?.shadowRadius = 6  // Soft and blurred shadow
+        
+        // Set button size
+        button.widthAnchor.constraint(equalToConstant: 250).isActive = true  // Adjusted button width
+        button.heightAnchor.constraint(equalToConstant: 50).isActive = true  // Adjusted button height
+    }
+
+    // Add hover effect to a button
+    func addHoverEffect(to button: NSButton) {
+        let hoverArea = NSTrackingArea(
+            rect: button.bounds,
+            options: [.mouseEnteredAndExited, .activeInActiveApp],
+            owner: self,
+            userInfo: ["button": button]
+        )
+        button.addTrackingArea(hoverArea)
+    }
+
+    // Handle mouse hover events
+    override func mouseEntered(with event: NSEvent) {
+        if let button = event.trackingArea?.userInfo?["button"] as? NSButton {
+            animateButton(button, isHovered: true)
+        }
+    }
+
+    override func mouseExited(with event: NSEvent) {
+        if let button = event.trackingArea?.userInfo?["button"] as? NSButton {
+            animateButton(button, isHovered: false)
+        }
+    }
+
+    // Animate button on hover
+    func animateButton(_ button: NSButton, isHovered: Bool) {
+        let animation = CABasicAnimation(keyPath: "transform.scale")
+        animation.toValue = isHovered ? 1.05 : 1.0
+        animation.duration = 0.1
+        animation.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+        animation.isRemovedOnCompletion = false
+        animation.fillMode = .forwards
+        button.layer?.add(animation, forKey: "hoverEffect")
+    }
+
+    // Navigation actions
     @objc func goToGuestPage() {
         let nextViewController = NextViewController()
         self.view.window?.contentViewController = nextViewController
     }
-    
+
     @objc func goToSignInPage() {
         let nextViewController = SignInViewController()
         self.view.window?.contentViewController = nextViewController
     }
+
     @objc func goToSignUpPage() {
-            let nextViewController = SignUpViewController()
-            self.view.window?.contentViewController = nextViewController
+        let nextViewController = SignUpViewController()
+        self.view.window?.contentViewController = nextViewController
     }
-    
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -488,105 +632,145 @@ class SignInViewController: NSViewController {
 
 class NextViewController: NSViewController {
     override func loadView() {
-        view = NSView(frame: NSMakeRect(0, 0, 400, 300))
+        view = NSView(frame: NSMakeRect(0, 0, 800, 600))  // Adjusted window size for macOS
         view.wantsLayer = true
-        view.layer?.backgroundColor = NSColor.black.cgColor
+
+         // Set a gradient background
+        let navyBlue = NSColor(red: 69/255.0, green: 90/255.0, blue: 100/255.0, alpha: 1.0)
+        let lightBlue = NSColor(red: 63/255.0, green: 82/255.0, blue: 119/255.0, alpha: 1.0)
+        let steelblue = NSColor(red: 70/255.0, green: 130/255.0, blue: 180/255.0, alpha: 1.0)
+        let midnightblue = NSColor(red: 25/255.0, green: 25/255.0, blue: 112/255.0, alpha: 1.0)
         
-        let percButton = NSButton(title: "Percussion", target: self, action: #selector(goToNextPage_perc))
-        percButton.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(percButton)
+        // Create gradient layer
+        let gradientLayer = CAGradientLayer()
+        gradientLayer.colors = [
+            navyBlue.cgColor,
+            lightBlue.cgColor,
+            NSColor.black.cgColor
+        ]
+        gradientLayer.frame = view.bounds
+        gradientLayer.startPoint = CGPoint(x: 0, y: 0)  // Top-left corner
+        gradientLayer.endPoint = CGPoint(x: 1, y: 1)    // Bottom-right corner
+        view.layer = gradientLayer
+
+        // Animate gradient colors
+        let colorAnimation = CABasicAnimation(keyPath: "colors")
+        colorAnimation.fromValue = [
+            navyBlue.cgColor,
+            lightBlue.cgColor,
+            NSColor.black.cgColor
+        ]
+        colorAnimation.toValue = [
+            midnightblue.cgColor,
+            steelblue.cgColor,
+            NSColor.black.cgColor
+        ]
+        colorAnimation.duration = 1.5  // Animation duration in seconds
+        colorAnimation.autoreverses = true  // Reverse the animation
+        colorAnimation.repeatCount = .infinity  // Repeat indefinitely
+        gradientLayer.add(colorAnimation, forKey: "colorChange")
+
+        // Back button (top-left corner)
+        let backButton = createButton(title: "Back", action: #selector(goBack), backgroundColor: navyBlue)
+        view.addSubview(backButton)
         NSLayoutConstraint.activate([
-            percButton.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: -300),
-            percButton.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -5)
+            backButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),  // 20 points from the left
+            backButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 20)          // 20 points from the top
         ])
-        let chordButton = NSButton(title: "Chords", target: self, action: #selector(goToNextPage_chord))
-        chordButton.translatesAutoresizingMaskIntoConstraints = false
+
+        // Create image views and corresponding buttons
+        let chords_image = NSImage(named: "chords_inst")
+        let perc_image = NSImage(named: "percs")
+        let express_image = NSImage(named: "express_inst")
+
+        if chords_image == nil || perc_image == nil || express_image == nil {
+            print("Error: Image not found!")
+            return
+        }
+
+        // Chords image and button
+        let chordsImageView = createCircularImageView(image: chords_image!, size: 450)
+        let chordButton = createButton(title: "Chords", action: #selector(goToNextPage_chord), backgroundColor: navyBlue)
+        view.addSubview(chordsImageView)
         view.addSubview(chordButton)
         NSLayoutConstraint.activate([
-            chordButton.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: 300),
-            chordButton.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -5)
+            chordsImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: -450),  // Left side
+            chordsImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -250),  // Slightly above center
+            chordButton.topAnchor.constraint(equalTo: chordsImageView.bottomAnchor, constant: 10),  // Button below image
+            chordButton.centerXAnchor.constraint(equalTo: chordsImageView.centerXAnchor)            // Centered below image
         ])
-        let expressButton = NSButton(title: "Expressive", target: self, action: #selector(goToNextPage_express))
-        expressButton.translatesAutoresizingMaskIntoConstraints = false
+
+        // Percussion image and button
+        let percImageView = createCircularImageView(image: perc_image!, size: 450)
+        let percButton = createButton(title: "Percussion", action: #selector(goToNextPage_perc), backgroundColor: navyBlue)
+        view.addSubview(percImageView)
+        view.addSubview(percButton)
+        NSLayoutConstraint.activate([
+            percImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: 450),     // Right side
+            percImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -250),    // Slightly above center
+            percButton.topAnchor.constraint(equalTo: percImageView.bottomAnchor, constant: 10),     // Button below image
+            percButton.centerXAnchor.constraint(equalTo: percImageView.centerXAnchor)              // Centered below image
+        ])
+
+        // Expressive image and button
+        let expressImageView = createCircularImageView(image: express_image!, size: 450)
+        let expressButton = createButton(title: "Expressive", action: #selector(goToNextPage_express), backgroundColor: navyBlue)
+        view.addSubview(expressImageView)
         view.addSubview(expressButton)
         NSLayoutConstraint.activate([
-            expressButton.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: 0),
-            expressButton.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: 450)
+            expressImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),                // Center
+            expressImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: 300), // Below other images
+            expressButton.topAnchor.constraint(equalTo: expressImageView.bottomAnchor, constant: 10), // Button below image
+            expressButton.centerXAnchor.constraint(equalTo: expressImageView.centerXAnchor)        // Centered below image
         ])
-        
-        let chords_image = NSImage(named: "chords_inst")
-        if chords_image == nil {
-            print("Error: Image not found!")
-            return
-        }
-        
-        let chordsimageView = NSImageView()
-        chordsimageView.image = chords_image
-        chordsimageView.translatesAutoresizingMaskIntoConstraints = false
-        chordsimageView.imageScaling = .scaleProportionallyUpOrDown
-        view.addSubview(chordsimageView)
-        NSLayoutConstraint.activate([
-            chordsimageView.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: 300),
-            chordsimageView.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -200),
-            chordsimageView.widthAnchor.constraint(equalToConstant: 350),
-            chordsimageView.heightAnchor.constraint(equalToConstant: 350)
-        ])
-        
-        let perc_image = NSImage(named: "percs")
-        if perc_image == nil {
-            print("Error: Image not found!")
-            return
-        }
-        
-        let percimageView = NSImageView()
-        percimageView.image = perc_image
-        percimageView.translatesAutoresizingMaskIntoConstraints = false
-        percimageView.imageScaling = .scaleProportionallyUpOrDown
-        view.addSubview(percimageView)
-        NSLayoutConstraint.activate([
-            percimageView.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: -300),
-            percimageView.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -200),
-            percimageView.widthAnchor.constraint(equalToConstant: 350),
-            percimageView.heightAnchor.constraint(equalToConstant: 350)
-        ])
-        
-        
-        let express_image = NSImage(named: "express_inst")
-        if express_image == nil {
-            print("Error: Image not found!")
-            return
-        }
-        
-        
-        let expressimageView = NSImageView()
-        expressimageView.image = express_image
-        expressimageView.translatesAutoresizingMaskIntoConstraints = false
-        expressimageView.imageScaling = .scaleProportionallyUpOrDown
-        view.addSubview(expressimageView)
-        NSLayoutConstraint.activate([
-            expressimageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            expressimageView.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: 250),
-            expressimageView.widthAnchor.constraint(equalToConstant: 350),
-            expressimageView.heightAnchor.constraint(equalToConstant: 350)
-        ])
-        
-        
-        let backButton = NSButton(title: "Back", target: self, action: #selector(goBack))
-        backButton.frame = NSRect(x: 20, y: 900, width: 100, height: 40)
-        backButton.bezelStyle = .rounded
-        view.addSubview(backButton)
-        
-        
-        
     }
+
+    // Helper function to create and style buttons
+    func createButton(title: String, action: Selector, backgroundColor: NSColor) -> NSButton {
+        let button = NSButton(title: title, target: self, action: action)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        styleButton(button, backgroundColor: backgroundColor)
+        return button
+    }
+
+    // Button styling
+    func styleButton(_ button: NSButton, backgroundColor: NSColor = .systemBlue) {
+        button.bezelStyle = .rounded
+        button.isBordered = false
+        button.wantsLayer = true
+        button.layer?.cornerRadius = 12  // Softer rounded corners
+        button.layer?.backgroundColor = backgroundColor.cgColor
+        button.contentTintColor = .white  // Text color
+        button.font = NSFont.systemFont(ofSize: 18, weight: .medium)  // Adjusted font size
+        button.widthAnchor.constraint(equalToConstant: 200).isActive = true  // Adjusted button width
+        button.heightAnchor.constraint(equalToConstant: 50).isActive = true  // Adjusted button height
+    }
+
+    // Helper function to create circular image views
+    func createCircularImageView(image: NSImage, size: CGFloat) -> NSImageView {
+        let imageView = NSImageView()
+        imageView.image = image
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.imageScaling = .scaleProportionallyUpOrDown
+        imageView.wantsLayer = true
+        imageView.layer?.cornerRadius = size / 2  // Make it circular
+        imageView.layer?.masksToBounds = true
+        imageView.widthAnchor.constraint(equalToConstant: size).isActive = true
+        imageView.heightAnchor.constraint(equalToConstant: size).isActive = true
+        return imageView
+    }
+
+    // Navigation actions
     @objc func goToNextPage_chord() {
         let runController = GestViewController_chords()
         self.view.window?.contentViewController = runController
     }
+
     @objc func goToNextPage_perc() {
         let runController = RunController_percs()
         self.view.window?.contentViewController = runController
     }
+
     @objc func goToNextPage_express() {
         let runController = RunController_express()
         self.view.window?.contentViewController = runController
@@ -617,284 +801,246 @@ class NextViewController: NSViewController {
         }
     }
     
-}    
+}  
+
+class SharedData: ObservableObject {
+    @Published var gesture_mappings: [String: String] = [:]
+    @Published var section_mappings: [String: String] = [:]
+}
+
+struct ContentView: View {
+    var gestures: [String]
+    var chords: [String]
+    var sections: [String]
+    var chordTypes: [String]
+    
+    @ObservedObject var sharedData: SharedData
+    
+    var body: some View {
+        ZStack {
+            // Background gradient
+            LinearGradient(gradient: Gradient(colors: [
+                Color(red: 69/255, green: 90/255, blue: 100/255),
+                Color(red: 63/255, green: 82/255, blue: 119/255),
+                Color.black
+            ]),
+            startPoint: .topLeading, endPoint: .bottomTrailing)
+            .ignoresSafeArea()
+            
+            HStack {
+                Spacer()
+                
+                // Chords List
+                VStack {
+                    sectionTitle("Chords")
+                    scrollableList(items: chords, color: Color(red: 70/255, green: 130/255, blue: 180/255))
+                }
+                
+                // Gesture Basket
+                VStack {
+                    sectionTitle("Gestures Basket")
+                    gestureBasket()
+                }
+                
+                // Chord Types List
+                VStack {
+                    sectionTitle("Chord Types")
+                    scrollableList(items: chordTypes, color: Color(red: 255/255, green: 165/255, blue: 0/255))
+                }
+                
+                // Sections Basket
+                VStack {
+                    sectionTitle("Sections Basket")
+                    sectionBasket()
+                }
+                
+                Spacer()
+            }
+            .padding()
+        }
+    }
+    
+    // MARK: - UI Components
+    
+    func sectionTitle(_ text: String) -> some View {
+        Text(text)
+            .font(.headline)
+            .foregroundColor(.white)
+            .padding(.bottom, 10)
+    }
+    
+    func scrollableList(items: [String], color: Color) -> some View {
+        ScrollView {
+            VStack(spacing: 10) {
+                ForEach(items, id: \.self) { item in
+                    Text(item)
+                        .padding()
+                        .background(color)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
+                        .onDrag {
+                            NSItemProvider(object: item as NSString)
+                        }
+                }
+            }
+        }
+        .frame(maxHeight: .infinity)
+    }
+    
+    func gestureBasket() -> some View {
+        ScrollView {
+            VStack(spacing: 10) {
+                ForEach(gestures, id: \.self) { gesture in
+                    HStack {
+                        Text(gesture)
+                            .foregroundColor(.white)
+                        if let chord = sharedData.gesture_mappings[gesture] {
+                            Text(chord)
+                                .padding()
+                                .background(Color.green)
+                                .foregroundColor(.white)
+                                .cornerRadius(8)
+                        }
+                    }
+                    .padding()
+                    .background(Color.gray.opacity(0.2))
+                    .cornerRadius(8)
+                    .onDrop(of: ["public.text"], delegate: DropDelegate(destination: gesture, basket: $sharedData.gesture_mappings))
+                }
+            }
+        }
+        .frame(maxHeight: .infinity)
+    }
+    
+    func sectionBasket() -> some View {
+        ScrollView {
+            VStack(spacing: 10) {
+                ForEach(sections, id: \.self) { section in
+                    HStack {
+                        Text(section)
+                            .foregroundColor(.white)
+                        if let chordType = sharedData.section_mappings[section] {
+                            Text(chordType)
+                                .padding()
+                                .background(Color.purple)
+                                .foregroundColor(.white)
+                                .cornerRadius(8)
+                        }
+                    }
+                    .padding()
+                    .background(Color.gray.opacity(0.2))
+                    .cornerRadius(8)
+                    .onDrop(of: ["public.text"], delegate: DropDelegate(destination: section, basket: $sharedData.section_mappings))
+                }
+            }
+        }
+        .frame(maxHeight: .infinity)
+    }
+}
+// Drop Delegate
+struct DropDelegate: SwiftUI.DropDelegate {
+    let destination: String
+    @Binding var basket: [String: String]
+
+    func performDrop(info: DropInfo) -> Bool {
+        guard let item = info.itemProviders(for: ["public.text"]).first else { return false }
+        
+        item.loadObject(ofClass: NSString.self) { (data, error) in
+            if let text = data as? String {
+                DispatchQueue.main.async {
+                    basket[destination] = text
+                }
+            }
+        }
+        return true
+    }
+
+    func validateDrop(info: DropInfo) -> Bool {
+        return info.itemProviders(for: ["public.text"]).isEmpty == false
+    }
+}
 
  
 //CHORDS GEST MAP
+
 class GestViewController_chords: NSViewController {
     var gestures = ["Open Palm", "Closed Fist", "Thumbs Up", "Thumbs Down", "Pointing Up", "Victory", "I Love You"]
     var chords = ["C", "C#", "Db", "D", "D#", "Eb", "E", "F", "F#", "Gb", "G", "G#", "Ab", "A", "A#", "Bb", "B"]
     var sections = ["Top", "Middle", "Bottom"]
     var chord_types = ["Major", "Minor", "Minor7", "Major7", "Dominant7", "Diminished7", "Hitchcock", "Augmented", "Augmented7#5", "AugmentedM7#", "Augmentedm7+", "Augmented7+", "Suspended4", "Suspended2", "Suspended47", "Suspended11", "Suspended4b9", "Suspendedb9", "Six", "Minor6", "Major6", "SevenSix", "SixNine", "Nine", "Major9", "Dominant7b9", "Dominant7#9", "Eleven", "Dominant7#11", "Minor11", "Thirteen", "Major13", "Minor13", "Dominant7b5", "NC", "Hendrix", "Power"]
     
-    var gesture_mappings: [String: String] = [:] // Gesture-to-chord mappings
-    var section_mappings: [String: String] = [:] // Section-to-chord-type mappings
-    var inputFields: [String: NSTextField] = [:] // Stores text fields for gestures
-    var sectionFields: [String: NSTextField] = [:] // Stores text fields for sections
+    // Shared state
+    var sharedData = SharedData()
 
     override func loadView() {
-        view = NSView(frame: NSMakeRect(0, 0, 600, 400))
+        // Create the main view
+        view = NSView(frame: NSMakeRect(0, 0, 800, 600))
         view.wantsLayer = true
         view.layer?.backgroundColor = NSColor.white.cgColor
-        
-        // Title label
-        let titleLabel = NSTextField(labelWithString: "Chord Instrument Mapping")
-        titleLabel.font = NSFont(name: "Helvetica Neue", size: 30)
-        titleLabel.textColor = NSColor.darkGray
-        titleLabel.alignment = .center
-        titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(titleLabel)
-        
-        // Gesture input list
-        let gesturesList = createGestureInputView(title: "Gestures", items: gestures)
-        gesturesList.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(gesturesList)
 
-        // Display available chords
-        let chordsList = createChordsDisplayView(title: "Chords", items: chords)
-        chordsList.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(chordsList)
+        // Embed the SwiftUI ContentView
+        let contentView = ContentView(
+            gestures: gestures,
+            chords: chords,
+            sections: sections,
+            chordTypes: chord_types,
+            sharedData: sharedData
+        )
         
-        // Section input list
-        let sectionsList = createSectionInputView(title: "Chord Types", items: sections)
-        sectionsList.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(sectionsList)
-        
-        // Display available chord types as a reference
-        let chordTypesList = createChordsDisplayGrid(title: "Chord Type List", items: chord_types)
-        chordTypesList.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(chordTypesList)
+        let hostingView = NSHostingView(rootView: contentView)
+        hostingView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(hostingView)
 
-        // Done Button - leads to the next page
-        let doneButton = NSButton(title: "Done", target: self, action: #selector(goToNextPage))
-        doneButton.translatesAutoresizingMaskIntoConstraints = false
-        doneButton.font = NSFont.systemFont(ofSize: 20)
-        doneButton.setFrameSize(NSSize(width: 120, height: 50))
-        view.addSubview(doneButton)
-        
-        let defaultButton = NSButton(title: "Default Mapping", target: self, action: #selector(setDefaultMapping))
-        defaultButton.translatesAutoresizingMaskIntoConstraints = false
-        defaultButton.font = NSFont.systemFont(ofSize: 20)
-        defaultButton.setFrameSize(NSSize(width: 120, height: 50))
-        view.addSubview(defaultButton)
-        
-        // Page layout
+        // Add constraints to the hosting view
         NSLayoutConstraint.activate([
-            titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 20),
-            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            titleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            titleLabel.heightAnchor.constraint(equalToConstant: 40),
-            
-            gesturesList.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            gesturesList.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 50),
-            gesturesList.widthAnchor.constraint(equalToConstant: 250),
-            
-            chordsList.leadingAnchor.constraint(equalTo: gesturesList.trailingAnchor, constant: 40),
-            chordsList.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 50),
-            chordsList.widthAnchor.constraint(equalToConstant: 150),
-
-            sectionsList.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: -100),
-            sectionsList.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 50),
-            sectionsList.widthAnchor.constraint(equalToConstant: 250),
-
-            chordTypesList.leadingAnchor.constraint(equalTo: sectionsList.trailingAnchor, constant: 40),
-            chordTypesList.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 50),
-            chordTypesList.widthAnchor.constraint(equalToConstant: 500),
-            
-            doneButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            doneButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -30),
-            
-            defaultButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            defaultButton.bottomAnchor.constraint(equalTo: doneButton.topAnchor, constant: -20)
+            hostingView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            hostingView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            hostingView.topAnchor.constraint(equalTo: view.topAnchor),
+            hostingView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
+}
 
-    // Create gesture input list
-    private func createGestureInputView(title: String, items: [String]) -> NSStackView {
-        let stackView = NSStackView()
-        stackView.orientation = .vertical
-        stackView.alignment = .leading
-        stackView.spacing = 15
+// MARK: - DraggableTextField
 
-        let titleLabel = NSTextField(labelWithString: title)
-        titleLabel.font = NSFont(name: "Helvetica Neue", size: 22)
-        titleLabel.textColor = NSColor.darkGray
-        stackView.addArrangedSubview(titleLabel)
-
-        for item in items {
-            let inputView = InputView(labelText: item, placeholder: "Enter chord")
-            stackView.addArrangedSubview(inputView)
-            inputFields[item] = inputView.textField
-        }
-        return stackView
+class DraggableTextField: NSTextField {
+    override init(frame frameRect: NSRect) {
+        super.init(frame: frameRect)
+        self.isSelectable = false
+        self.isEditable = false
+        self.isBordered = false
+        self.backgroundColor = NSColor.clear
+        self.registerForDraggedTypes([.string])
     }
 
-    // Formatting for section input list
-    private func createSectionInputView(title: String, items: [String]) -> NSStackView {
-        let stackView = NSStackView()
-        stackView.orientation = .vertical
-        stackView.alignment = .leading
-        stackView.spacing = 10
-
-        let titleLabel = NSTextField(labelWithString: title)
-        titleLabel.font = NSFont(name: "Helvetica Neue", size: 22)
-        titleLabel.textColor = NSColor.darkGray
-        stackView.addArrangedSubview(titleLabel)
-
-        for item in items {
-            let inputView = InputView(labelText: item, placeholder: "Enter chord type")
-            stackView.addArrangedSubview(inputView)
-            sectionFields[item] = inputView.textField
-        }
-        return stackView
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 
-    // Formatting for available chords
-    private func createChordsDisplayView(title: String, items: [String]) -> NSStackView {
-        let stackView = NSStackView()
-        stackView.orientation = .vertical
-        stackView.alignment = .leading
-        stackView.spacing = 15
-
-        let titleLabel = NSTextField(labelWithString: title)
-        titleLabel.font = NSFont(name: "Helvetica Neue", size: 22)
-        titleLabel.textColor = NSColor.darkGray
-        stackView.addArrangedSubview(titleLabel)
-
-        for item in items {
-            let label = NSTextField(labelWithString: item)
-            label.font = NSFont(name: "Helvetica Neue", size: 18)
-            stackView.addArrangedSubview(label)
-        }
-        return stackView
-    }
-    
-    // Formatting for available chord types
-    private func createChordsDisplayGrid(title: String, items: [String]) -> NSStackView {
-        let stackView = NSStackView()
-        stackView.orientation = .vertical
-        stackView.alignment = .leading
-        stackView.spacing = 15
-
-        let titleLabel = NSTextField(labelWithString: title)
-        titleLabel.font = NSFont(name: "Helvetica Neue", size: 22)
-        titleLabel.textColor = NSColor.darkGray
-        stackView.addArrangedSubview(titleLabel)
-
-        let gridView = NSGridView()
-        gridView.columnSpacing = 20
-        gridView.rowSpacing = 20
-        let columns = 3
+    override func mouseDown(with event: NSEvent) {
+        let pasteboardItem = NSPasteboardItem()
+        pasteboardItem.setString(self.stringValue, forType: .string)
         
-        var currentRow: [NSTextField] = []
-        for (index, item) in items.enumerated() {
-            let label = NSTextField(labelWithString: item)
-            label.font = NSFont(name: "Helvetica Neue", size: 18)
-            label.translatesAutoresizingMaskIntoConstraints = false
-            currentRow.append(label)
-            
-            if currentRow.count == columns || index == items.count - 1 {
-                gridView.addRow(with: currentRow)
-                currentRow.removeAll()
-            }
-        }
-        stackView.addArrangedSubview(gridView)
-        return stackView
-    }
-
-    // Go to next page
-    @objc func goToNextPage() {
-        saveMappingsToJSON()  // Save mappings before transition
-        let runconc = RunController_chords()
-        self.view.window?.contentViewController = runconc
-    }
-    
-    // Set default mappings and go to next page
-    @objc private func setDefaultMapping() {
-        gesture_mappings = [
-            "Open Palm": "C",
-            "Closed Fist": "D",
-            "Thumbs Down": "E",
-            "Thumbs Up": "F",
-            "Pointing Up": "G",
-            "Victory": "A",
-            "I Love You": "B"
-        ]
-        section_mappings = [
-            "Top": "Major",
-            "Middle": "Minor",
-            "Bottom": "Dominant7"
-        ]
-        for (gesture, textField) in inputFields {
-            textField.stringValue = gesture_mappings[gesture] ?? ""
-        }
-        for (section, textField) in sectionFields {
-            textField.stringValue = section_mappings[section] ?? ""
-        }
-        goToNextPage()
-    }
-
-    // Save mappings to a JSON file
-    private func saveMappingsToJSON() {
-        var invalidEntries: [String] = []
-        var firstInvalidField: NSTextField? = nil
-
-        // Validate gestures to chords
-        for (gesture, textField) in inputFields {
-            let userInput = textField.stringValue
-            if !chords.contains(userInput) && !userInput.isEmpty {
-                invalidEntries.append("\(gesture): \(userInput)")
-                if firstInvalidField == nil { firstInvalidField = textField }
-            } else {
-                gesture_mappings[gesture] = userInput.isEmpty ? "None" : userInput
-            }
-        }
-
-        // Validate sections to chord types
-        for (section, textField) in sectionFields {
-            let userInput = textField.stringValue
-            if !chord_types.contains(userInput) && !userInput.isEmpty {
-                invalidEntries.append("\(section): \(userInput)")
-                if firstInvalidField == nil { firstInvalidField = textField }
-            } else {
-                section_mappings[section] = userInput.isEmpty ? "None" : userInput
-            }
-        }
-
-        if !invalidEntries.isEmpty {
-            showAlert(message: "Invalid Entries", info: "The following inputs are invalid:\n\(invalidEntries.joined(separator: "\n"))") {
-                firstInvalidField?.becomeFirstResponder() // Refocus on the first invalid field
-            }
-            return
-        }
-
-        let jsonFilePath = FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent("gesture_mappings.json")
+        let draggingItem = NSDraggingItem(pasteboardWriter: pasteboardItem)
+        draggingItem.setDraggingFrame(self.bounds, contents: self.stringValue)
         
-        let data: [String: Any] = [
-            "gesture_to_chord": gesture_mappings,
-            "chord_types": section_mappings
-        ]
-        
-        do {
-            let jsonData = try JSONSerialization.data(withJSONObject: data, options: .prettyPrinted)
-            try jsonData.write(to: jsonFilePath)
-            print("Mappings saved successfully to \(jsonFilePath)")
-        } catch {
-            print("Error saving JSON: \(error.localizedDescription)")
-        }
-    }
-
-    // Function to show an alert for invalid inputs with a completion handler
-    private func showAlert(message: String, info: String, completion: (() -> Void)? = nil) {
-        let alert = NSAlert()
-        alert.messageText = message
-        alert.informativeText = info
-        alert.alertStyle = .warning
-        alert.addButton(withTitle: "OK")
-        alert.runModal() // Wait for user to click OK
-        completion?() // Execute completion function after user clicks "OK"
+        beginDraggingSession(with: [draggingItem], event: event, source: self)
     }
 }
+
+extension DraggableTextField: NSDraggingSource {
+    func draggingSession(_ session: NSDraggingSession, sourceOperationMaskFor context: NSDraggingContext) -> NSDragOperation {
+        return .copy
+    }
+}
+
+// Delegate for NSTextField drag and drop
+extension GestViewController_chords: NSTextFieldDelegate {
+    func controlTextDidEndEditing(_ obj: Notification) {
+        // Handle text field updates after editing is done
+    }
+}
+
 
 // Handles Text Input for Chord & Chord Type Entry
 class InputView: NSView {
@@ -1168,7 +1314,7 @@ class RunController_chords: NSViewController {
         keyUpEvent?.post(tap: .cghidEventTap)
 
         // Wait for a short delay (optional)
-        Thread.sleep(forTimeInterval: 0.5)
+        Thread.sleep(forTimeInterval: 0.2)
 
         // Simulate pressing Enter
         let keyEnter: CGKeyCode = 36 // Key code for Enter
@@ -1380,7 +1526,7 @@ class RunController_percs: NSViewController {
         keyUpEvent?.post(tap: .cghidEventTap)
 
         // Wait for a short delay (optional)
-        Thread.sleep(forTimeInterval: 0.5)
+        Thread.sleep(forTimeInterval: 0.2)
 
         // Simulate pressing Enter
         let keyEnter: CGKeyCode = 36 // Key code for Enter
@@ -1592,7 +1738,7 @@ class RunController_express: NSViewController {
         keyUpEvent?.post(tap: .cghidEventTap)
 
         // Wait for a short delay (optional)
-        Thread.sleep(forTimeInterval: 0.5)
+        Thread.sleep(forTimeInterval: 0.2)
 
         // Simulate pressing Enter
         let keyEnter: CGKeyCode = 36 // Key code for Enter
