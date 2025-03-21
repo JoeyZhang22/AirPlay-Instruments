@@ -1,3 +1,4 @@
+import math
 import cv2
 import MediaPipe.mediapipe_utils as mediapipe_utils
 import numpy as np
@@ -9,6 +10,8 @@ left_margin = 25  # pixels
 # Visualization default parameters
 default_text_color = (0, 0, 0)  # black
 default_font_size = 0.5
+default_font_size_factor = 0.0005
+default_font_thickness_factor = 0.001
 default_font_thickness = 1
 
 # Label parameters
@@ -42,9 +45,14 @@ def draw_text(
     color=default_text_color,
     font_size=default_font_size,
 ):
+    # Refactor font size according to frame size
+    frame_height, frame_width = current_frame.shape[:2]
+    actual_font_size = frame_width * default_font_size_factor
+    actual_font_thickness = math.ceil(frame_width * default_font_size_factor * 1.25)
+
     # Compute text size
     text_size = cv2.getTextSize(
-        text, cv2.FONT_HERSHEY_DUPLEX, default_font_size, default_font_thickness
+        text, cv2.FONT_HERSHEY_DUPLEX, actual_font_size, actual_font_thickness
     )[0]
     text_width, text_height = text_size
 
@@ -54,9 +62,9 @@ def draw_text(
         text,
         text_location,
         cv2.FONT_HERSHEY_DUPLEX,
-        font_size,
+        actual_font_size,
         color,
-        default_font_thickness,
+        actual_font_thickness,
         cv2.LINE_AA,
     )
 
@@ -100,7 +108,6 @@ def draw_gesture_labels(recognition_result, current_frame):
             (text_x_px + offset_x * text_width, text_y_px + offset_y * text_height),
             result_text,
             label_text_color,
-            label_font_size,
         )
 
         # Draw Area Name
@@ -118,7 +125,6 @@ def draw_gesture_labels(recognition_result, current_frame):
             (text_x_px + offset_x * text_width, text_y_px + offset_y * text_height * 2),
             area_text,
             area_text_color,
-            label_font_size,
         )
 
         # Draw hand landmarks on the frame
@@ -185,7 +191,7 @@ def draw_division_lines(current_frame, areas, need_arrow=False):
             if x_max != 1:
                 draw_dashed_line(current_frame, (x_max, y_min), (x_max, y_max), line_color, line_thickness)
             
-            draw_text(current_frame, (x_min + 2, y_max - 5), area.name, area_label_color, 0.5)
+            draw_text(current_frame, (x_min + 2, y_max - 5), area.name, area_label_color,)
         elif area.type == "Circle" or area.type == "Corner":
             normalized_x, normalized_y = area.center
             center_x = int(normalized_x * frame_width)
@@ -207,9 +213,9 @@ def draw_division_lines(current_frame, areas, need_arrow=False):
             text_width, text_height = text_size
 
             if area.type == "Circle":
-                draw_text(current_frame, (center_x, center_y + text_offset_y*(radius_y + text_height)), area.name, area_label_color, 0.5)
+                draw_text(current_frame, (center_x, center_y + text_offset_y*(radius_y + text_height)), area.name, area_label_color)
             else:
-                draw_text(current_frame, (center_x + text_offset_x*(text_width), center_y + text_offset_y*(radius_y + text_height)), area.name, area_label_color, 0.5)
+                draw_text(current_frame, (center_x + text_offset_x*(text_width), center_y + text_offset_y*(radius_y + text_height)), area.name, area_label_color)
 
 def draw_dashed_line(image, start_point, end_point, color, thickness, dash_length=5, gap_length=5):
     x1, y1 = start_point
@@ -230,7 +236,7 @@ def draw_dashed_line(image, start_point, end_point, color, thickness, dash_lengt
         cv2.line(image, (start_x, start_y), (end_x, end_y), color, thickness)
 
 
-def draw_arrow(image, start_point, end_point, color=(0, 255, 223), thickness=8):
+def draw_arrow(image, start_point, end_point, color=(192, 157, 120), thickness=8):
     height, width, _ = image.shape
     
     # Convert normalized points to pixel values
