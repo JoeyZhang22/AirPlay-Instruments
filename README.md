@@ -4,6 +4,11 @@
 
 Welcome to AirPlay Instruments!
 
+![airplay_homepage](https://github.com/user-attachments/assets/a73afaea-56a3-48e0-822c-b43ad13831aa)
+![instrument_selection](https://github.com/user-attachments/assets/7f01faeb-2bd5-45bd-91ef-c4030cab5fc6)
+
+
+
 ## Project Goals
 The project proves three main ways to provide unique ways for users to input musical information. 
 1. Chord based instrument
