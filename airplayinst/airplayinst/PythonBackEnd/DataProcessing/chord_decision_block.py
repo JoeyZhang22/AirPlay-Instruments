@@ -33,7 +33,7 @@ class chordDecisionBlock:
     def __init__(self, output_port="Logic Pro Virtual In", config_file_path = "../MIDI/gesture_mappings.json"):
         print("chordDecisionBlock Initialized!")
         self.output_port = mido.open_output(output_port)
-        self.chordMatrix = generate_mappings(config_path=config_file_path)
+        self.chordMatrix, self.config = generate_mappings(config_path=config_file_path)
         self.get_chords_list(chord_matrix=self.chordMatrix)
         self.midi_chord_list = convert_chord_to_midi_chord(self.chord_list)
         self.state = instrumentState.NEUTRAL

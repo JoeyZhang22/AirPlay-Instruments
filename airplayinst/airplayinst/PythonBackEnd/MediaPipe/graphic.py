@@ -221,6 +221,7 @@ def run_graphic(
     handedness,
     instrument_type,
     chord_list,
+    area_list,
 ) -> None:
     """Continuously run inference on images acquired from the camera.
 
@@ -253,7 +254,7 @@ def run_graphic(
     )
 
     # Define areas
-    areas = define_areas(handedness, instrument_type)
+    areas = define_areas(handedness, instrument_type, name_list=area_list)
 
     # Continuously capture images from the camera and run inference
     while camera.isOpened():

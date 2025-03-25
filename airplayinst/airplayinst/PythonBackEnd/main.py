@@ -40,15 +40,18 @@ def main():
     # Create a queue to hold data from graphic
     result_queue = queue.Queue()
     result_event = threading.Event()
+    area_list = {}
 
     # Map the instrument type argument to its mode
     if args.instrument == 'C':
         instrument_mode = "Chord"
         print("CHORD INSTRUMENT MODE")
         decision_block_object = chordDecisionBlock(config_file_path=args.config)
+        area_list = decision_block_object.config["chord_types"]
     elif args.instrument == 'E':
         instrument_mode = "Expressive"
         decision_block_object = expressiveDecisionBlock(config_file_path=args.config)
+        area_list = decision_block_object.config["chord_types"]
     elif args.instrument == 'P':
         instrument_mode = "Percussion"
         decision_block_object = percussionDecisionBlock()
@@ -85,6 +88,7 @@ def main():
         args.handedness,
         instrument_mode,   # Insturment Mode, "Percussion" or "Expressive"
         chord_list,
+        area_list=area_list
     )
 
 

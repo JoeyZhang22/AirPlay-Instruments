@@ -67,4 +67,4 @@ def generate_mappings(config_path="/gesture_mappings.json"):
             suffix = chord_types.get(section, "")
             if chord:
                 chord_matrix[section][gesture] = chord + suffix
-    return chord_matrix
+    return chord_matrix, loaded_data
