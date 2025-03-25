@@ -13,21 +13,35 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         // Close any automatically created window
-        for existingWindow in NSApplication.shared.windows {
-            existingWindow.close()
-        }
+        NSApplication.shared.windows.forEach { $0.close() }
 
-        // Create the main window
-        window = NSWindow(contentRect: NSMakeRect(0, 0, 400, 300),
-                          styleMask: [.titled, .closable, .resizable],
-                          backing: .buffered, defer: false)
+        // Get screen dimensions
+        let screenSize = NSScreen.main?.frame.size ?? CGSize(width: 1200, height: 800)
+        
+        // Create the main window with proper configuration
+        window = NSWindow(
+            contentRect: NSRect(origin: .zero, size: screenSize),
+            styleMask: [.titled, .closable, .resizable, .miniaturizable, .fullSizeContentView],
+            backing: .buffered,
+            defer: false
+        )
+        
+        // Configure window for edge-to-edge content
+        window?.titlebarAppearsTransparent = true
+        window?.titleVisibility = .hidden
+        window?.isOpaque = false
+        window?.backgroundColor = .clear
         window?.center()
         window?.title = "Airplay Instruments"
-        window?.makeKeyAndOrderFront(nil)
-
+        
         // Set the initial view controller
         let startViewController = StartViewController()
         window?.contentViewController = startViewController
+        window?.makeKeyAndOrderFront(nil)
+        
+        // Ensure content fills the window
+        window?.contentView?.wantsLayer = true
+        window?.contentView?.layer?.backgroundColor = NSColor.clear.cgColor
     }
 }
 

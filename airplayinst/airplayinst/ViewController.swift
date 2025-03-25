@@ -233,8 +233,8 @@ class StartViewController: NSViewController {
         let sign_in_button = createButton(title: "Sign In", action: #selector(goToSignInPage), backgroundColor: lightBlue)
         let guest_button = createButton(title: "Play As Guest", action: #selector(goToGuestPage), backgroundColor: lightBlue)
         
-        stackView.addArrangedSubview(sign_up_button)
-        stackView.addArrangedSubview(sign_in_button)
+        // stackView.addArrangedSubview(sign_up_button)
+        // stackView.addArrangedSubview(sign_in_button)
         stackView.addArrangedSubview(guest_button)
         
         // Adjust constraints for the stack view
@@ -751,20 +751,22 @@ class NextViewController: NSViewController {
         return imageView
     }
 
-    // Navigation actions
+    // Navigation actions   
+    // In your previous view controller:
     @objc func goToNextPage_chord() {
-        let runController = GestViewController_chords()
-        self.view.window?.contentViewController = runController
-    }
-
-    @objc func goToNextPage_perc() {
-        let runController = RunController_percs()
-        self.view.window?.contentViewController = runController
+        let gestVC = GestViewController(instrumentType: "chord")
+        self.view.window?.contentViewController = gestVC
     }
 
     @objc func goToNextPage_express() {
-        let runController = RunController_express()
-        self.view.window?.contentViewController = runController
+        let gestVC = GestViewController(instrumentType: "expressive")
+        self.view.window?.contentViewController = gestVC
+    }
+
+    @objc func goToNextPage_perc() {
+        // Keep percussion separate if it has different requirements
+        let percVC = RunController_percs()
+        self.view.window?.contentViewController = percVC
     }
 
     @objc private func goBack() {

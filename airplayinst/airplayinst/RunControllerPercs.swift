@@ -9,20 +9,34 @@ import Combine
 import SwiftUI
 
 class RunController_percs: NSViewController {
-    private var frameReceiver = FrameReceiver() // ObservableObject for receiving frames
-    private var pythonServer = PythonServer()   // ObservableObject for starting the server
 
-    private let host = "localhost" // Replace with your server's host
-    private let port = 60003       // Replace with your server's port
-    private let delayInSeconds: Double = 2.0 // Delay duration before starting the client
+    private var frameReceiver = FrameReceiver()
+    private var pythonServer = PythonServer()
+    private let host = "localhost"
+    private let port = 60003
+    private let delayInSeconds: Double = 2.0
+    private var isClientStarted = false
 
-    private var isClientStarted = false // To track if the client has started
-
+    private var buttonStack: NSStackView!  // Add this line to make buttonStack accessible
+    
     private var imageView: NSImageView!
     private var statusLabel: NSTextField!
-    private var startServerButton: NSButton!
-    private var stopServerButton: NSButton!
-    private var startClientButton: NSButton!
+    private var backButton: NSButton!
+    private var startLogicProButton: NSButton!
+    private var recordButton: NSButton!
+    private var stopButton: NSButton!
+    private var playButton: NSButton!
+
+    // containers for top and buttom views
+    private var topContainerView: NSView!
+    private var middleContainerView: NSView!  // New container for image view
+    private var bottomContainerView: NSView!
+    
+    // Define colors matching your theme
+    private let navyBlue = NSColor(red: 69/255.0, green: 90/255.0, blue: 100/255.0, alpha: 1.0)
+    private let lightBlue = NSColor(red: 63/255.0, green: 82/255.0, blue: 119/255.0, alpha: 1.0)
+    private let steelblue = NSColor(red: 70/255.0, green: 130/255.0, blue: 180/255.0, alpha: 1.0)
+
     override func loadView() {
         runAppleScript()
                 // Define the absolute path of the Python script
@@ -30,78 +44,152 @@ class RunController_percs: NSViewController {
 
         startServer(scriptPath: scriptPath, instrumentType: "percussion")
         
+       // Create main view (already correct)
         let mainView = NSView()
         mainView.wantsLayer = true
-        mainView.layer?.backgroundColor = NSColor.black.cgColor
+        self.view = mainView
+        mainView.autoresizingMask = [.width, .height]
         
-        // Initialize and configure imageView
-        imageView = NSImageView()
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.imageScaling = .scaleProportionallyUpOrDown
-        mainView.addSubview(imageView, positioned: .below, relativeTo: nil) // Ensure it's at the back
+        // Gradient setup (optimized)
+        let gradientLayer = CAGradientLayer()
+        gradientLayer.frame = mainView.bounds
+        gradientLayer.autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
+        gradientLayer.colors = [navyBlue.cgColor, lightBlue.cgColor, NSColor.black.cgColor]
+        mainView.layer = gradientLayer
+
+        // Create and configure UI elements with containers
+        createContainerViews(in: mainView)
+        createUIElements()
         
-        // Initialize and configure statusLabel
-        statusLabel = NSTextField(labelWithString: "Server not running")
-        statusLabel.translatesAutoresizingMaskIntoConstraints = false
-        statusLabel.font = NSFont.systemFont(ofSize: 24)
-        statusLabel.textColor = .gray
-        mainView.addSubview(statusLabel)
+        // Set up constraints
+        setupConstraints(for: mainView)
         
-        // Add buttons using frames or constraints
-        let logicButton_rec = NSButton(title: "Start Recording", target: self, action: #selector(startRecording))
-        logicButton_rec.frame = NSRect(x: 20, y: 60, width: 120, height: 40)
-        logicButton_rec.bezelStyle = .rounded
-        mainView.addSubview(logicButton_rec)
-        
-        let logicButton_stop_rec = NSButton(title: "Stop Recording", target: self, action: #selector(stopRecording))
-        logicButton_stop_rec.frame = NSRect(x: 20, y: 20, width: 120, height: 40)
-        logicButton_stop_rec.bezelStyle = .rounded
-        mainView.addSubview(logicButton_stop_rec)
-        
-        let logicButton_metro = NSButton(title: "Playback", target: self, action: #selector(startRecording))
-        logicButton_metro.frame = NSRect(x: 20, y: 300, width: 120, height: 40)
-        logicButton_metro.bezelStyle = .rounded
-        mainView.addSubview(logicButton_metro)
-        
-        let backButton = NSButton(title: "Back", target: self, action: #selector(goBack))
-        backButton.frame = NSRect(x: 20, y: 900, width: 120, height: 40)
-        backButton.bezelStyle = .rounded
-        mainView.addSubview(backButton)
-        
-        let instDropdown = NSPopUpButton(frame: NSRect(x: 20, y: 500, width: 120, height: 40))
-        let menu = NSMenu()
-        menu.addItem(withTitle: "Keyboard", action: #selector(startRecording), keyEquivalent: "c")
-        menu.addItem(withTitle: "Acoustic Guitar", action: #selector(startRecording), keyEquivalent: "d")
-        menu.addItem(withTitle: "Electric Guitar", action: #selector(startRecording), keyEquivalent: "e")
-        instDropdown.menu = menu
-        mainView.addSubview(instDropdown)
-        
-        // Activate constraints for imageView and statusLabel
-        NSLayoutConstraint.activate([
-            imageView.leadingAnchor.constraint(equalTo: mainView.leadingAnchor),
-            imageView.trailingAnchor.constraint(equalTo: mainView.trailingAnchor),
-            imageView.topAnchor.constraint(equalTo: mainView.topAnchor),
-            imageView.bottomAnchor.constraint(equalTo: mainView.bottomAnchor),
-            
-            statusLabel.centerXAnchor.constraint(equalTo: mainView.centerXAnchor),
-            statusLabel.centerYAnchor.constraint(equalTo: mainView.centerYAnchor)
-        ])
-        
+        self.view = mainView
+
+        // Client startup and frame receiver (same as before)
         Task {
-            try await Task.sleep(nanoseconds: 2 * 1_000_000_000) // 2 seconds in nanoseconds
+            try await Task.sleep(nanoseconds: 2 * 1_000_000_000)
             startClient()
-            print("After 2 seconds")
         }
-       
-        
+
         frameReceiver.$image.sink { [weak self] newImage in
             DispatchQueue.main.async {
                 self?.imageView.image = newImage
                 self?.statusLabel.stringValue = newImage != nil ? "Receiving frames..." : "Waiting for frames..."
             }
         }.store(in: &cancellables)
+    }
+
+    private func createContainerViews(in mainView: NSView) {
+        // Top container (header)
+        topContainerView = NSView()
+        topContainerView.translatesAutoresizingMaskIntoConstraints = false
+        mainView.addSubview(topContainerView)
         
-        self.view = mainView
+        // Middle container (image view)
+        middleContainerView = NSView()
+        middleContainerView.translatesAutoresizingMaskIntoConstraints = false
+        mainView.addSubview(middleContainerView)
+        
+        // Bottom container (buttons)
+        bottomContainerView = NSView()
+        bottomContainerView.translatesAutoresizingMaskIntoConstraints = false
+        mainView.addSubview(bottomContainerView)
+    }
+
+    private func createUIElements() {
+        // Add back button and status label to top container
+        backButton = createButton(title: "Back", action: #selector(goBack))
+        topContainerView.addSubview(backButton)
+        
+        statusLabel = NSTextField(labelWithString: "Server not running")
+        statusLabel.translatesAutoresizingMaskIntoConstraints = false
+        statusLabel.font = NSFont.systemFont(ofSize: 24, weight: .semibold)
+        statusLabel.textColor = .white
+        statusLabel.alignment = .center
+        topContainerView.addSubview(statusLabel)
+        
+        // Add image view to middle container
+        imageView = NSImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.imageScaling = .scaleProportionallyUpOrDown
+        imageView.wantsLayer = true
+        imageView.layer?.cornerRadius = 12
+        imageView.layer?.masksToBounds = true
+        middleContainerView.addSubview(imageView)
+        
+        // Add button stack to bottom container
+        startLogicProButton = createButton(title: "Start Logic Pro", action: #selector(startLogicPro))
+        recordButton = createButton(title: "Record", action: #selector(startRecording))
+        stopButton = createButton(title: "Stop", action: #selector(stopRecording))
+        playButton = createButton(title: "Play", action: #selector(startPlayback))
+    
+        buttonStack = NSStackView(views: [startLogicProButton, recordButton, stopButton, playButton])
+        buttonStack.orientation = .horizontal
+        buttonStack.distribution = .fillEqually
+        buttonStack.alignment = .centerY
+        buttonStack.spacing = 390 // Acts as minimum, since fillEqually enforces equal widths
+        buttonStack.translatesAutoresizingMaskIntoConstraints = false
+        bottomContainerView.addSubview(buttonStack)
+    }
+    
+    private func setupConstraints(for mainView: NSView) {
+            NSLayoutConstraint.activate([
+                // Container layout
+                topContainerView.leadingAnchor.constraint(equalTo: mainView.leadingAnchor),
+                topContainerView.trailingAnchor.constraint(equalTo: mainView.trailingAnchor),
+                topContainerView.topAnchor.constraint(equalTo: mainView.safeAreaLayoutGuide.topAnchor),
+                topContainerView.heightAnchor.constraint(equalToConstant: 60),
+                
+                // Middle container layout (same width as top container)
+                middleContainerView.leadingAnchor.constraint(equalTo: mainView.leadingAnchor),
+                middleContainerView.trailingAnchor.constraint(equalTo: mainView.trailingAnchor),
+                middleContainerView.topAnchor.constraint(equalTo: topContainerView.bottomAnchor),
+                middleContainerView.bottomAnchor.constraint(equalTo: bottomContainerView.topAnchor),
+                
+                // Bottom container layout (same width as top container)
+                bottomContainerView.leadingAnchor.constraint(equalTo: mainView.leadingAnchor),
+                bottomContainerView.trailingAnchor.constraint(equalTo: mainView.trailingAnchor),
+                bottomContainerView.bottomAnchor.constraint(equalTo: mainView.safeAreaLayoutGuide.bottomAnchor),
+                bottomContainerView.heightAnchor.constraint(equalToConstant: 50),
+                
+                // Top container contents
+                backButton.leadingAnchor.constraint(equalTo: topContainerView.leadingAnchor, constant: 20),
+                backButton.centerYAnchor.constraint(equalTo: topContainerView.centerYAnchor),
+                backButton.widthAnchor.constraint(equalToConstant: 80),
+                backButton.heightAnchor.constraint(equalToConstant: 30),
+                statusLabel.centerXAnchor.constraint(equalTo: topContainerView.centerXAnchor),
+                statusLabel.centerYAnchor.constraint(equalTo: topContainerView.centerYAnchor),
+                statusLabel.leadingAnchor.constraint(greaterThanOrEqualTo: backButton.trailingAnchor, constant: 10),
+//                
+//                // Middle container contents (image view)
+                imageView.leadingAnchor.constraint(equalTo: middleContainerView.leadingAnchor, constant: 10),
+                imageView.trailingAnchor.constraint(equalTo: middleContainerView.trailingAnchor, constant: -10),
+                imageView.topAnchor.constraint(equalTo: middleContainerView.topAnchor, constant: 10),
+                imageView.bottomAnchor.constraint(equalTo: middleContainerView.bottomAnchor, constant: -10),
+//
+//              // Bottom container contents
+//                buttonStack.leadingAnchor.constraint(equalTo: bottomContainerView.leadingAnchor, constant: 20),
+//                buttonStack.trailingAnchor.constraint(equalTo: bottomContainerView.trailingAnchor, constant: -20),
+//                buttonStack.centerYAnchor.constraint(equalTo: bottomContainerView.centerYAnchor),
+//                buttonStack.heightAnchor.constraint(equalToConstant: 50),
+
+            ])
+        }
+    
+    private func createButton(title: String, action: Selector) -> NSButton {
+        let button = NSButton(title: title, target: self, action: action)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.bezelStyle = .rounded
+        button.isBordered = false
+        button.wantsLayer = true
+        button.layer?.cornerRadius = 12
+        button.layer?.backgroundColor = steelblue.cgColor
+        button.contentTintColor = .white
+        button.font = NSFont.systemFont(ofSize: 18, weight: .medium)
+        button.widthAnchor.constraint(equalToConstant: 150).isActive = true
+        button.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        return button
     }
 
     @objc private func goBack() {
@@ -113,16 +201,16 @@ class RunController_percs: NSViewController {
         let nextViewController = NextViewController()
         window.contentViewController = nextViewController
     }
-        @objc private func startLogicPro() {
-            let appPath = "/Applications/Logic Pro.app"
-            let workspace = NSWorkspace.shared
+    @objc private func startLogicPro() {
+        let appPath = "/Applications/Logic Pro.app"
+        let workspace = NSWorkspace.shared
 
-            if workspace.open(URL(fileURLWithPath: appPath)) {
-                print("Logic Pro started successfully!")
-            } else {
-                print("Failed to start Logic Pro.")
-            }
+        if workspace.open(URL(fileURLWithPath: appPath)) {
+            print("Logic Pro started successfully!")
+        } else {
+            print("Failed to start Logic Pro.")
         }
+    }
     @objc private func startRecording() {
         // Usage
         let midiSender = MIDISender()
