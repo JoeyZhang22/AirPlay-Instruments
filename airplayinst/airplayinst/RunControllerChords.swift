@@ -144,7 +144,7 @@ class RunController: NSViewController {
         buttonStack.orientation = .horizontal
         buttonStack.distribution = .fillEqually
         buttonStack.alignment = .centerY
-        buttonStack.spacing = 390 // Acts as minimum, since fillEqually enforces equal widths
+        buttonStack.spacing = 300 // Acts as minimum, since fillEqually enforces equal widths
         buttonStack.translatesAutoresizingMaskIntoConstraints = false
         bottomContainerView.addSubview(buttonStack)
     }
@@ -155,7 +155,7 @@ class RunController: NSViewController {
                 topContainerView.leadingAnchor.constraint(equalTo: mainView.leadingAnchor),
                 topContainerView.trailingAnchor.constraint(equalTo: mainView.trailingAnchor),
                 topContainerView.topAnchor.constraint(equalTo: mainView.safeAreaLayoutGuide.topAnchor),
-                topContainerView.heightAnchor.constraint(equalToConstant: 60),
+                topContainerView.heightAnchor.constraint(equalToConstant: 50),
                 
                 // Middle container layout (same width as top container)
                 middleContainerView.leadingAnchor.constraint(equalTo: mainView.leadingAnchor),
@@ -179,19 +179,19 @@ class RunController: NSViewController {
                 statusLabel.leadingAnchor.constraint(greaterThanOrEqualTo: backButton.trailingAnchor, constant: 10),
 //                
 //                // Middle container contents (image view)
-                imageView.leadingAnchor.constraint(equalTo: middleContainerView.leadingAnchor, constant: 10),
-                imageView.trailingAnchor.constraint(equalTo: middleContainerView.trailingAnchor, constant: -10),
+                imageView.leadingAnchor.constraint(equalTo: middleContainerView.leadingAnchor, constant: 20),
+                imageView.trailingAnchor.constraint(equalTo: middleContainerView.trailingAnchor, constant: -20),
                 imageView.topAnchor.constraint(equalTo: middleContainerView.topAnchor, constant: 10),
                 imageView.bottomAnchor.constraint(equalTo: middleContainerView.bottomAnchor, constant: -10),
 //
 //              // Bottom container contents
-//                buttonStack.leadingAnchor.constraint(equalTo: bottomContainerView.leadingAnchor, constant: 20),
-//                buttonStack.trailingAnchor.constraint(equalTo: bottomContainerView.trailingAnchor, constant: -20),
-//                buttonStack.centerYAnchor.constraint(equalTo: bottomContainerView.centerYAnchor),
-//                buttonStack.heightAnchor.constraint(equalToConstant: 50),
+//                 buttonStack.leadingAnchor.constraint(equalTo: bottomContainerView.leadingAnchor, constant: 20),
+//                 buttonStack.trailingAnchor.constraint(equalTo: bottomContainerView.trailingAnchor, constant: -20),
+//                 buttonStack.centerYAnchor.constraint(equalTo: bottomContainerView.centerYAnchor),
+//                 buttonStack.heightAnchor.constraint(equalToConstant: 50),
 
             ])
-        }
+    }
     
     private func createButton(title: String, action: Selector) -> NSButton {
         let button = NSButton(title: title, target: self, action: action)
@@ -338,18 +338,37 @@ class SharedData: ObservableObject {
     @Published var section_mappings: [String: String] = [:]
 
     // Generate JSON and save to file
+    // Generate JSON and save to file
     func saveMappingsToJSON() {
+        // 1. Create an ordered array for chord types
+        let orderedChordTypes = [
+            section_mappings["Top"],
+            section_mappings["Middle"], 
+            section_mappings["Bottom"]
+        ].compactMap { $0 } // Remove nil values if any section is missing
+        
+        // 2. Prepare the JSON dictionary with ordered data
         let jsonData: [String: Any] = [
             "gesture_to_chord": gesture_mappings,
-            "chord_types": Array(section_mappings.values)
+            "chord_types": orderedChordTypes
         ]
 
         do {
-            let jsonData = try JSONSerialization.data(withJSONObject: jsonData, options: .prettyPrinted)
+            // 3. Serialize with sorted keys to maintain order
+            let jsonData = try JSONSerialization.data(
+                withJSONObject: jsonData, 
+                options: [.prettyPrinted, .sortedKeys]
+            )
+            
             let filePath = "/Users/joeyzhang/Documents/git/school/AirPlay-Instruments/AirplayInst/airplayinst/PythonBackEnd/DataProcessing/gesture_mappings.json"
             let fileURL = URL(fileURLWithPath: filePath)
             try jsonData.write(to: fileURL)
             print("JSON file saved successfully at: \(filePath)")
+            
+            // 4. Print verification of order
+            if let jsonString = String(data: jsonData, encoding: .utf8) {
+                print("Generated JSON:\n\(jsonString)")
+            }
         } catch {
             print("Error saving JSON: \(error.localizedDescription)")
         }

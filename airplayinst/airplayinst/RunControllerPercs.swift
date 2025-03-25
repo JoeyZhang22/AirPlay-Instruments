@@ -128,7 +128,7 @@ class RunController_percs: NSViewController {
         buttonStack.orientation = .horizontal
         buttonStack.distribution = .fillEqually
         buttonStack.alignment = .centerY
-        buttonStack.spacing = 390 // Acts as minimum, since fillEqually enforces equal widths
+        buttonStack.spacing = 350 // Acts as minimum, since fillEqually enforces equal widths
         buttonStack.translatesAutoresizingMaskIntoConstraints = false
         bottomContainerView.addSubview(buttonStack)
     }
