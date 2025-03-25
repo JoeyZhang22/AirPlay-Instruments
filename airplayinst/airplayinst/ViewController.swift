@@ -231,7 +231,7 @@ class StartViewController: NSViewController {
         // Create buttons and add them to the stack view
         let sign_up_button = createButton(title: "Sign Up", action: #selector(goToSignUpPage), backgroundColor: lightBlue)
         let sign_in_button = createButton(title: "Sign In", action: #selector(goToSignInPage), backgroundColor: lightBlue)
-        let guest_button = createButton(title: "Play As Guest", action: #selector(goToGuestPage), backgroundColor: lightBlue)
+        let guest_button = createButton(title: "Play", action: #selector(goToGuestPage), backgroundColor: lightBlue)
         
         // stackView.addArrangedSubview(sign_up_button)
         // stackView.addArrangedSubview(sign_in_button)
@@ -240,7 +240,8 @@ class StartViewController: NSViewController {
         // Adjust constraints for the stack view
         NSLayoutConstraint.activate([
             stackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            stackView.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 40)  // Adjusted spacing
+            stackView.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 40),
+            stackView.heightAnchor.constraint(equalToConstant: 120) // Set your desired height here
         ])
     }
     
@@ -277,9 +278,24 @@ class StartViewController: NSViewController {
         let button = NSButton(title: title, target: self, action: action)
         button.translatesAutoresizingMaskIntoConstraints = false
         styleButton(button, backgroundColor: backgroundColor)
-        addHoverEffect(to: button) // Add hover effect
+        addHoverEffect(to: button)
+
+        // Make the button larger
+        let size: CGFloat = 300
+        button.widthAnchor.constraint(equalToConstant: size).isActive = true
+        button.heightAnchor.constraint(equalToConstant: size).isActive = true
+
+        // Style as a circle
+        button.wantsLayer = true
+        button.layer?.cornerRadius = size / 2
+        button.layer?.masksToBounds = true
+
+        // Make font bigger
+        button.font = NSFont.systemFont(ofSize: 24, weight: .bold)
+
         return button
     }
+
 
     // Button styling
     func styleButton(_ button: NSButton, backgroundColor: NSColor = .systemBlue) {
@@ -680,31 +696,31 @@ class NextViewController: NSViewController {
         }
 
         // Chords image and button
-        let chordsImageView = createCircularImageView(image: chords_image!, size: view.bounds.width * 0.4) // 30% of view width
+        let chordsImageView = createCircularImageView(image: chords_image!, size: view.bounds.width * 0.5) // 30% of view width
         let chordButton = createButton(title: "Chords", action: #selector(goToNextPage_chord), backgroundColor: navyBlue)
         view.addSubview(chordsImageView)
         view.addSubview(chordButton)
         NSLayoutConstraint.activate([
-            chordsImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 60),  // 20 points from the left
-            chordsImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -view.bounds.height * 0.1),  // 10% above center
+            chordsImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 100),  // 20 points from the left
+            chordsImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -view.bounds.height * 0.2),  // 10% above center
             chordButton.topAnchor.constraint(equalTo: chordsImageView.bottomAnchor, constant: 10),  // Button below image
             chordButton.centerXAnchor.constraint(equalTo: chordsImageView.centerXAnchor)            // Centered below image
         ])
 
         // Percussion image and button
-        let percImageView = createCircularImageView(image: perc_image!, size: view.bounds.width * 0.4) // 30% of view width
+        let percImageView = createCircularImageView(image: perc_image!, size: view.bounds.width * 0.5) // 30% of view width
         let percButton = createButton(title: "Percussion", action: #selector(goToNextPage_perc), backgroundColor: navyBlue)
         view.addSubview(percImageView)
         view.addSubview(percButton)
         NSLayoutConstraint.activate([
-            percImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -60),  // 20 points from the right
-            percImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -view.bounds.height * 0.1),  // 10% above center
+            percImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -100),  // 20 points from the right
+            percImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -view.bounds.height * 0.2),  // 10% above center
             percButton.topAnchor.constraint(equalTo: percImageView.bottomAnchor, constant: 10),     // Button below image
             percButton.centerXAnchor.constraint(equalTo: percImageView.centerXAnchor)              // Centered below image
         ])
 
         // Expressive image and button
-        let expressImageView = createCircularImageView(image: express_image!, size: view.bounds.width * 0.4)
+        let expressImageView = createCircularImageView(image: express_image!, size: view.bounds.width * 0.5)
         let expressButton = createButton(title: "Expressive", action: #selector(goToNextPage_express), backgroundColor: navyBlue)
         view.addSubview(expressImageView)
         view.addSubview(expressButton)

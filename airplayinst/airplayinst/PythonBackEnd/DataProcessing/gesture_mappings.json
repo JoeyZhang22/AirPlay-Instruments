@@ -1,16 +1,16 @@
 {
-    "gesture_to_chord": {
-        "Closed_Fist": "C",
-        "Open_Palm": "G",
-        "Pointing_Up": "D",
-        "Thumb_Down": "A",
-        "Thumb_Up": "E",
-        "Victory": "B",
-        "ILoveYou": "F"
-    },
-    "chord_types": [
-        "Major",
-        "Minor",
-        "Diminished7"
-    ]
+  "chord_types" : [
+    "Dominant7",
+    "Minor",
+    "Major"
+  ],
+  "gesture_to_chord" : {
+    "Closed_Fist" : "F",
+    "ILoveYou" : "G",
+    "Open_Palm" : "C",
+    "Pointing_Up" : "E",
+    "Thumb_Down" : "Eb",
+    "Thumb_Up" : "G",
+    "Victory" : "F"
+  }
 }

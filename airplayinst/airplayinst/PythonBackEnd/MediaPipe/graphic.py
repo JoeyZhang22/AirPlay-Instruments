@@ -11,7 +11,7 @@ import MediaPipe.opencv_utils as opencv_utils
 division_area = mediapipe_utils.Area
 
 # TESTER
-TEST_ENABLED = False
+TEST_ENABLED = True
 
 # Global variables to calculate FPS
 COUNTER, FPS = 0, 0
@@ -137,7 +137,7 @@ def define_areas(handedness, instrument_type, name_list=['Dominant7', 'Major', '
         for i in range(len(left_areas)):
             areas.append(
                 division_area(
-                    left_areas[i], "Rectangle", 0, 0 + left_stride * i, 0.5, left_stride * (i + 1)
+                    left_areas[i], "Rectangle", 0, 0 + left_stride * i, 0.4, left_stride * (i + 1)
                 )
             )
 
@@ -145,7 +145,7 @@ def define_areas(handedness, instrument_type, name_list=['Dominant7', 'Major', '
         manipulate_area_name = 'Manipulation'
         areas.append(
             division_area(
-                manipulate_area_name, "Rectangle", 0.5, 0, 1, 1
+                manipulate_area_name, "Rectangle", 0.4, 0, 1, 1
             )
         )
     else:
